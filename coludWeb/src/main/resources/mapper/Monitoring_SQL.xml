@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="monitoring">
+
+	<!-- 해당 사용자의 관리그룹 목록번호 얻기 -->
+	<select id="getG_nos" parameterType="string" resultType="_int">
+		SELECT	g_no	FROM Group_user
+		WHERE	u_id = #{u_id}
+		ORDER BY g_no;
+	</select>
+	
+	<!-- 해당 사용자의 관리 그룹이름 목록 얻기 -->
+	<select id="getG_names" parameterType="string" resultType="string">
+		SELECT	g.g_name	
+		FROM Group_table g , Group_user gu
+		WHERE	gu.u_id = #{u_id}
+		AND		g.g_no = gu.g_no
+		ORDER BY g.g_no;
+	</select>
+	
+	<!-- g_no ==> g_cl_period -->
+	<select id ="getG_cl_period" parameterType="_int" resultType="_int">
+		SELECT	g_cl_period		FROM Group_Table
+		WHERE g_no = #{g_no}
+	</select>
+
+	<!-- g_no ==> g_m_period -->
+	<select id ="getG_m_period" parameterType="_int" resultType="_int">
+		SELECT	g_m_period		FROM Group_Table
+		WHERE g_no = #{g_no}
+	</select>
+
+	<select id ="getGs_nos" parameterType="_int" resultType="_int">
+		SELECT	gs_no		FROM Group_sensor
+		WHERE 	g_no = #{g_no}
+	</select>
+
+	<!-- 모니터링 작업을 위해 센서 위치 찾는 쿼리 -->
+	<select id ="getS_display" parameterType="_int" resultType="string">
+		SELECT	s_display		FROM Group_sensor
+		WHERE 	gs_no = #{gs_no}
+	</select>	
+	 
+	<!-- 해당 그룹의 모든 센서 설치 위치 목록 -->
+	<select id ="getS_displays" parameterType="_int" resultType="hashmap">
+		SELECT	gs_no, s_display		FROM Group_sensor
+		WHERE 	g_no = #{g_no}
+		ORDER BY gs_code
+	</select>	
+	
+
+	
+	<!-- gs_no ==> 각 센서 요소(sf_no[]) 목록 확인 (Group_sensor + Sensor_Factor [s_no조인] ) -->
+	<select id ="getSf_nos" parameterType="_int" resultType="_int">
+		SELECT	sf.sf_no		FROM Sensor_factor sf , Group_sensor gs
+		WHERE 	gs.gs_no = #{gs_no}
+		AND		gs.s_no = sf.s_no
+	</select>
+	
+	<select id ="getFromLimitTable" parameterType="hashmap" resultType="hashmap">
+		SELECT	l_table_name , l_high , l_low		FROM 	Limit_table
+		WHERE 	gs_no = #{gs_no}
+		AND		sf_no = #{sf_no}
+	</select>		
+
+	<select id ="getFromLimitTable1" parameterType="hashmap" resultType="hashmap">
+		SELECT	l_no , l_high , l_low		FROM 	Limit_table
+		WHERE 	gs_no = #{gs_no}
+		AND		sf_no = #{sf_no}
+	</select>
+
+	<select id ="getF_unit" parameterType="_int" resultType="string">
+		SELECT	f.f_unit	FROM	Factor f , Sensor_factor sf
+		WHERE 	sf.sf_no = #{sf_no}
+		AND		sf.f_no = f.f_no
+	</select>		
+
+	<!-- 모니터링 테이블에는 항상 최신값만 들어있음 -->
+	<select id ="getLastDate" parameterType="hashmap" resultType="date">
+		SELECT MAX(m_date) FROM ${table_name}
+		WHERE	l_no = #{l_no}
+	</select>
+	<select id ="getLastValue" parameterType="hashmap" resultType="string">
+		SELECT	m_value	FROM	${table_name}
+		WHERE	l_no = #{l_no}
+	</select>	
+	
+	<!-- 해당 그룹의 모든 측정요소 목록 (중복제외) -->
+	<select id ="getF_names" parameterType="_int" resultType="hashmap">
+		SELECT	DISTINCT f.f_no, f_table_name, f.f_name 
+			FROM	Factor f , Sensor_factor sf, Group_sensor gs
+			WHERE 	gs.g_no = #{g_no}
+			AND		gs.s_no = sf.s_no
+			AND		sf.f_no = f.f_no
+			ORDER BY f.f_no ASC
+	</select>	
+	
+	<!-- (DataList) 특정 테이블의 목록 수 구하기 -->
+	<select id ="getTotalCount" parameterType="hashmap" resultType="_int">
+		<![CDATA[      
+		SELECT COUNT(1) FROM ${table_name}
+			WHERE date >= #{startTime}
+			AND		date <= #{endTime}
+		]]>
+	</select>
+	
+	<!-- (DataList) 특정 테이블의 전체 목록 구하기 -->
+	<select id ="getTotalList" parameterType="hashmap" resultType="hashmap">
+		<![CDATA[      
+		SELECT * FROM ${table_name}
+			WHERE date >= #{startTime}
+			AND		date <= #{endTime}
+			ORDER BY (1) DESC
+		]]>
+	</select>
+	
+	<!-- (DataList) 시간간격 데이터 목록수 구하기 -->
+	<select id = "getTotalCount_UnitTime" parameterType="hashMap" resultType="int">
+		<![CDATA[      
+			SELECT COUNT(b.year) AS COUNT FROM
+				( SELECT year(a.date) year FROM 
+						( SELECT * FROM ${tableName}
+							WHERE date >= #{startTime}
+							AND		date <= #{endTime}
+							ORDER BY (1)	 DESC
+						) a
+					GROUP BY floor(minute(a.date)/#{unitTime}), hour(a.date), dayofmonth(a.date), month(a.date), year(a.date)
+				)	b
+		]]>
+	</select>
+	
+	<!-- (DataList) 시간간격 데이터 목록 구하기 -->
+	<select id = "getTotalList_UnitTime" parameterType="hashMap" resultType="tableData">
+		<![CDATA[      
+			SELECT year(a.date) year, month(a.date) month, dayofmonth(a.date) day, hour(a.date) hour, 
+						floor(minute(a.date)/#{unitTime})		AS gr, 
+						FORMAT(AVG(a.value),1) *10					AS value
+				FROM 
+					(
+						SELECT * FROM ${tableName}
+							WHERE date >= #{startTime}
+							AND		date <= #{endTime}
+					) a
+				GROUP BY floor(minute(a.date)/#{unitTime}), hour(a.date), dayofmonth(a.date), month(a.date), year(a.date)
+				-- ORDER BY year DESC, month DESC, day DESC, hour DESC, gr DESC
+		]]>
+	</select>	
+	
+	
+	
+	
+	
+	
+	
+</mapper>

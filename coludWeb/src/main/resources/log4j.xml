@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration PUBLIC "-//APACHE//DTD LOG4J 1.2//EN" "log4j.dtd">
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+
+<!-- 
+	설정 방법 : http://rahxephon.tistory.com/1460  참고
+ -->
+
+	<!-- Appenders
+		%p : debug, infor, warn, error, fatal 등의 Priority 출력
+		%m : debug(), info(), warn(), error(), fatal() 등의 함수로 지정한 로그 내용 출력
+		%d : 로깅 이벤트가 발생한 시간 기록. 출력 포맷은 %d 후의 {}내에 지정된 형태를 따른다. %d{HH:mm:ss, SSS} 라든가 %d{yyyy MMM dd HH:mm:ss, SSS}와 같은 형태로 사용할 수 있다. Java의 SimpleDateFormat의 형식을 따라 정의할 수 있다.
+		%t : 로깅 이벤트가 발생된 쓰레드의 이름 출력
+		%% : % 표시를 출력하기 위해 사용
+		%n : 플랫폼 종속적인 개행 문자 출력. \r\n 또는 \n이 될 것이다.	
+	 -->
+	<appender name="console" class="org.apache.log4j.ConsoleAppender">
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d{HH:mm:ss} %5p [%c] %m%n" />
+        </layout>   
+    </appender>
+    
+    <appender name="console-infolog" class="org.apache.log4j.ConsoleAppender">
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d{HH:mm:ss} %5p %m%n" />
+        </layout>   
+    </appender>
+	
+	<!-- Application Loggers -->
+	<!-- 해당 logger명이 anyframe.services(name 값)로 시작할 경우
+		 Console에 DEBUG(설정값) level 이상인 경우 로그를 남긴다.-->
+	<logger name="com" additivity="false">
+		<!-- TRACE, DEBUG, INFO, WARN, ERROR, FATAL, OFF 중 택일 -->
+		<level value="DEBUG" />
+		<!-- 위에서 설정한 appender-ref 중에서 선택 -->
+		<appender-ref ref="console"/>
+	</logger>
+	
+	<!-- Query Loggers -->
+	<logger name="jdbc.sqlonly" additivity="false">  
+    	<level value="DEBUG"/>  
+        <appender-ref ref="console-infolog"/>  
+    </logger>
+    
+    <!-- 쿼리 결과보기 -->
+    <logger name="jdbc.resultsettable" additivity="false">  
+    	<level value="DEBUG"/>  
+        <appender-ref ref="console-infolog"/>  
+    </logger>  
+
+	<!-- Root Logger -->
+	<!-- The content of element type "root" must match 
+	     "(param*,(priority|level)?,appender-ref*)" -->
+	<!-- ALL, OFF, DEBUG, ERROR, FATAL, INFO, TRACE, TRACE_INT, WARN -->
+	<root>
+    	<level value="OFF"/>  
+        <appender-ref ref="console"/>		
+	</root>
+	
+</log4j:configuration>

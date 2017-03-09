@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+						http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+	<!-- myBatis가 커넥션 풀에 있는 커넥션을 가지고 올 수 있는 클래스를  bean 등록한다
+			==> SqlSessionFactoryBean 라는 클래스
+	-->
+	<bean id="sqlSession" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<!--	myBatis의 환경 설정 파일을 등록한다.	-->
+		<property name="configLocation" >
+			<!-- 파일 위치와 이름은 사용자가 결정한다. -->
+			<value>classpath:/com/common/myBatis/myBatis-config.xml</value>
+		</property>		
+		<property name="mapperLocations" value="classpath:/mapper/**/*_SQL.xml" />
+	</bean>
+
+	<!-- myBatis에서 사용할 커넥션 클래스를 bean 선언한다.
+			==> SqlSessionFactoryBean 라는 클래스가 이 역활을 한다.
+				(비교 - 이전까지는 Connection 이라는 클래스를 이용해 왔었다. )
+		그래서 myBatis에서는 "커넥션을 잡는다" 라는 표현 대신에,
+		"세션을 잡는다"라는 표현으로 대신한다.							-->	
+	<bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate">
+        <constructor-arg index="0" ref="sqlSession"/>
+  </bean>  
+   
+	<!-- 원래 여기서 빈등록을 하지만, action-servlet.xml에서  
+			<context:component-scan base-package="com" /> 선언을 하면,
+			com 하위 클래스는 자동으로 빈 등록이 된다.
+	-->   
+		<!-- 서비스 클래스 등록 부분 
+	  <bean id="MemberService" class="com.hasom.service.MemberService" />
+		<bean id="MemberService" class="com.hasom.service.MemberService" />  
+		-->  
+		<!-- DAO 등록 부분 -->
+  
+</beans>

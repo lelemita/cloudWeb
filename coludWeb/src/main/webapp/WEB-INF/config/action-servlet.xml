@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="http://www.springframework.org/schema/beans"
+    xmlns:mvc="http://www.springframework.org/schema/mvc"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+       http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+	<!-- 이 xml 파일은 확장자가 hs으로 요청된 상태에서 필요한 환경설정을 하는 파일이다. -->
+	<mvc:annotation-driven />	
+
+	<!-- 자동 빈 등록 -->
+	<context:component-scan base-package="com" />
+	
+	<!-- 인터셉터 등록을 한다 -->
+	<mvc:interceptors>
+		<!-- 로거추가 -->
+		<mvc:interceptor>
+			<mvc:mapping path="/**"/>
+			<bean id="loggerInterceptor" class="com.common.logger.LoggerInterceptor"/>
+		</mvc:interceptor>
+
+		<!-- 로그인 여부 검사  -->
+		<mvc:interceptor>
+			<mvc:mapping path="/Monitoring/*" />
+			<mvc:mapping path="/EventLog/*" />
+			<bean class="com.hasom.util.IsLoginCheck" />
+		</mvc:interceptor>
+	</mvc:interceptors>
+	
+	<!-- 컨트롤러를 사용하지 않는 뷰 설정 
+	<mvc:view-controller	path="/Main/Main.lost"	view-name="Main/Main"/>
+	-->
+	
+	<!-- 리소스 파일 위치 등록 ==> 이 경로는 컨트롤러를 타지 않는다.. -->
+	<mvc:resources mapping="/resources/**" location="/resources/" />
+
+
+	<!-- 이건 뭐지;; 
+  <bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping"/>
+	 -->		
+  <!-- 이것도 뭐지 -ㅅ-;;
+  <bean class="org.springframework.web.servlet.view.BeanNameViewResolver" p:order="0" />
+  <bean id="jsonView" class="org.springframework.web.servlet.view.json.MappingJacksonJsonView" />    
+  -->
+ 	
+ 	<!-- 뷰문서를 만드는 기본 위치 -->   
+   <bean
+    	class="org.springframework.web.servlet.view.UrlBasedViewResolver" p:order="1" 
+    	p:viewClass="org.springframework.web.servlet.view.JstlView" 
+    	p:prefix="/WEB-INF/views/" p:suffix=".jsp">
+   </bean>
+   
+ 
+    
+    
+</beans>
+
+

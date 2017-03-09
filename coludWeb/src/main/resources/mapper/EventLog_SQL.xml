@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="eventLog">
+	
+	<!-- 테이블의 목록 수 구하기 -->
+	<select id ="getTotalCount" parameterType="hashmap" resultType="_int">
+			SELECT COUNT(1)
+			FROM	${tableName} e, group_sensor gs
+			WHERE	gs.g_no = #{g_no}
+			AND		gs.gs_code = e.gs_code
+			AND		e.gs_code IN ( ${gs_code_arr} )
+		<![CDATA[      
+			AND		evt_date >= #{startTime}
+			AND		evt_date <= #{endTime}
+		]]>
+		<if test='kind eq "C"'>
+			AND l_no = 0
+		</if>
+		<if test='kind eq "V"'>
+			AND l_no != 0
+		</if>		
+	</select>
+	
+	<!-- 테이블의 전체 목록 구하기 -->
+	<select id ="getTotalList" parameterType="hashmap" resultType="eventData">
+			SELECT e.evt_no , e.evt_date, gs.s_display, 
+				 if(e.l_no = 0 , '-' ,
+					(
+						SELECT f.f_name
+						FROM Factor f, Sensor_factor sf, limit_table l
+						WHERE f.f_no = sf.f_no
+						AND		sf.sf_no = l.sf_no
+						AND		l.l_no = e.l_no	
+					) 
+				) AS f_name , 
+				e.e_value , e.evt_msg
+			FROM	${tableName} e, group_sensor gs
+			WHERE	gs.g_no = #{g_no}
+			AND		gs.gs_code = e.gs_code
+			AND		e.gs_code IN ( ${gs_code_arr} )
+		<![CDATA[      
+			AND		evt_date >= #{startTime}
+			AND		evt_date <= #{endTime}
+		]]>
+		<if test='kind eq "C"'>
+			AND l_no = 0
+		</if>
+		<if test='kind eq "V"'>
+			AND l_no != 0
+		</if>		
+			ORDER BY e.evt_no DESC
+	</select>
+	
+</mapper>
