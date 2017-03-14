@@ -7,7 +7,7 @@
 <title>Insert title here</title>
 </head>
 <body>
-<h1>인덱스 파일<br></h1>
+<h1>인덱스 파일2<br></h1>
 
 <ul>
 	<li><a href="./Login/LoginForm.hs">로그인</a></li>
