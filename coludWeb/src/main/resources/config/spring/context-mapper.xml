@@ -6,7 +6,7 @@
 						http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
 	<!-- myBatis가 커넥션 풀에 있는 커넥션을 가지고 올 수 있는 클래스를  bean 등록한다
-			==> SqlSessionFactoryBean 라는 클래스 test
+			==> SqlSessionFactoryBean 라는 클래스
 	-->
 	<bean id="sqlSession" class="org.mybatis.spring.SqlSessionFactoryBean">
 		<property name="dataSource" ref="dataSource" />
