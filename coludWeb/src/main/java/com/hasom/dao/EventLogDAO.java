@@ -41,7 +41,8 @@ public class EventLogDAO extends AbstractDAO{
 		temp.put("kind", kind);		
 		return (ArrayList) selectList("eventLog.getTotalList" ,temp);
 	}
-	
+	// (rawData) 테이블 전체 목록 구하기
+
 	
 	
 }//class

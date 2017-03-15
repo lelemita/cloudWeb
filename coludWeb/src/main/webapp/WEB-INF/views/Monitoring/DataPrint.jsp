@@ -5,7 +5,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>하솜 정보기술 : 데이터 저장</title>
+<title>하솜 정보기술 : 측정 데이터</title>
 <meta charset=UTF-8>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 	
@@ -40,9 +40,9 @@ $(document).ready(function () {
 		$("#hour2").val("${ENDTIME}").prop("selected", true);
 		$("#unitTime").val("${UNITTIME}").prop("selected", true);
 		
-		//저장 실행
-		exportTableToCSV($("#table") , '${FILENAME}');
-		$("#sfrm").submit();		
+		//인쇄 실핸
+		window.print();
+	
 });
 
 	// 숫자 앞에 지정한 자리수만큼 0으로 채우기

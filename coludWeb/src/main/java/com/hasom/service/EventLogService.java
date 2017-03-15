@@ -36,7 +36,16 @@ public class EventLogService {
 		}
 		return resultList;
 	}
+	
+	/* 170315
+	 * (페이지 없이) rawData 목록 구하기 : csv 저장용
+	 */
+	public ArrayList GetTotalList(String tableName, String startTime, String endTime, String gs_code_arr, String kind) throws Exception{
+		ArrayList list = dao.getTotalList(tableName, startTime, endTime, gs_code_arr, kind);
+		return list;
+	}
 
 
+	
 	
 }//class

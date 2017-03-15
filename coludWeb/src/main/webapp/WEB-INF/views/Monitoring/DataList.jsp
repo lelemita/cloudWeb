@@ -170,10 +170,30 @@ $(function() {
 			return false;
 		}
 		var fileName = window.prompt("저장할 파일 이름을 적어주세요" , "DataList");
+		
+		if (fileName == null) { // 취소 버튼 누름
+			return false;
+		}
 		$("#fileName").val(fileName);
+		$("#sfrm").attr("target","_self");		
 		$("#sfrm").attr("action","../Monitoring/DataSave.hs")
 		$("#sfrm").submit();
 	}
+
+	// 조회 결과 인쇄 이벤트
+	function print() {
+		if (${PINFO.totalCount > 3000}) {
+			alert("결과가 3000개 이상입니다.\n조회 기간을 줄이거나,\n조회 간격을 늘려주세요.");
+			return false;
+		}
+	
+		$("#sfrm").attr("target","_blank");
+		$("#sfrm").attr("action","../Monitoring/DataPrint.hs")
+		$("#sfrm").submit();
+		// 원래 값으로 복구
+		$("#sfrm").attr("target","_self");
+		$("#sfrm").attr("action","../Monitoring/DataList.hs")		
+	}		
 	
 </script>
 </head>
@@ -344,6 +364,7 @@ $(function() {
 			<!-- 조회 후, 결과 저장(csv) 요청 버튼 -->
 			<c:if test="${LISTCOUNT ne null && LIST_0.size() ne 0}">
 				<input type="button" class="btn btn-primary" value="결과 저장" id="csvExporter" onclick="save();">
+				<input type="button" class="btn btn-primary" value="결과 인쇄" id="csvExporter" onclick="print();">
 			</c:if>
 			</div>
 
