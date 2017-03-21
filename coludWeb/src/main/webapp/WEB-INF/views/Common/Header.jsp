@@ -25,7 +25,7 @@
 		      <li id="MonitorList"><a href="#" onclick="move('../Monitoring/MonitorList.hs' , ${NOWGROUP})">실시간 현황</a></li>
 		      <li id="DataList"><a href="#" onclick="move('../Monitoring/DataList.hs' , ${NOWGROUP})">데이터 조회</a></li>
 		      <li id="EventList"><a href="#" onclick="move('../EventLog/EventList.hs' , ${NOWGROUP})">이벤트 목록</a></li>
-		      <li id="ShowGraph"><a href="#">그래프 조회</a></li>
+		      <li id="GraphData"><a href="#" onclick="move('../Graph/DataGraph.hs' , ${NOWGROUP})">그래프 조회</a></li>
 		      <li id="MakeReport"><a href="#">보고서 작성</a></li>
 	      </ul>
 	      <ul class="nav navbar-nav navbar-right">

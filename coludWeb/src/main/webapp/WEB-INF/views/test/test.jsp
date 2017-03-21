@@ -5,11 +5,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>하솜 정보기술 : 데이터 조회</title>
+<title>테스트 페이지</title>
 <meta charset=UTF-8>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-
-
 
 <!-- 날짜입력폼 위한 라이브러리 -->
 <link rel="stylesheet" href="http://code.jquery.com/ui/1.8.18/themes/base/jquery-ui.css" type="text/css" media="all" />
@@ -27,67 +25,108 @@
 <!-- Custom Fonts -->
 <link href="../resources/bootstrap/sb-admin-2/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
 
+<!-- flot -->
+<script src="../resources/bootstrap/sb-admin-2/vendor/flot/jquery.js"></script>
+<script src="../resources/bootstrap/sb-admin-2/vendor/flot/jquery.flot.js"></script>
 
 
-
-
+<head>
 <script>
-$(function() {
-  var dates = $( "#from, #to " ).datepicker({
-	  prevText: '이전 달',
-	  nextText: '다음 달',
-	  monthNames: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'],
-	  monthNamesShort: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'],
-	  dayNames: ['일','월','화','수','목','금','토'],
-	  dayNamesShort: ['일','월','화','수','목','금','토'],
-	  dayNamesMin: ['일','월','화','수','목','금','토'],
-	  dateFormat: 'yy-mm-dd',
-	  showMonthAfterYear: true,
-	  yearSuffix: '년',
-		maxDate:'+30d',
-	  onSelect: function( selectedDate ) {
-			var option = this.id == "from" ? "minDate" : "maxDate",
-			instance = $( this ).data( "datepicker" ),
-			date = $.datepicker.parseDate(
-			instance.settings.dateFormat ||
-			$.datepicker._defaults.dateFormat,
-			selectedDate, instance.settings );
-			dates.not( this ).datepicker( "option", option, date );
-  	}
-  });
+$(document).ready(function() {
+
+	showGraph();
+
 });
+
+
+    
+// 그래프 그리는 메서드
+function showGraph() {
+	var datasets = {
+			"usa": {
+				label: "USA",
+				data: [[1988, 483994], [1989, 479060], [1990, 457648], [1991, 401949], [1992, 424705], [1993, 402375], [1994, 377867], [1995, 357382], [1996, 337946], [1997, 336185], [1998, 328611], [1999, 329421], [2000, 342172], [2001, 344932], [2002, 387303], [2003, 440813], [2004, 480451], [2005, 504638], [2006, 528692]]
+			},        
+			"russia": {
+				label: "Russia",
+				data: [[1988, 218000], [1989, 203000], [1990, 171000], [1992, 42500], [1993, 37600], [1994, 36600], [1995, 21700], [1996, 19200], [1997, 21300], [1998, 13600], [1999, 14000], [2000, 19100], [2001, 21300], [2002, 23600], [2003, 25100], [2004, 26100], [2005, 31100], [2006, 34700]]
+			},
+			"uk": {
+				label: "UK",
+				data: [[1988, 62982], [1989, 62027], [1990, 60696], [1991, 62348], [1992, 58560], [1993, 56393], [1994, 54579], [1995, 50818], [1996, 50554], [1997, 48276], [1998, 47691], [1999, 47529], [2000, 47778], [2001, 48760], [2002, 50949], [2003, 57452], [2004, 60234], [2005, 60076], [2006, 59213]]
+			},
+			"germany": {
+				label: "Germany",
+				data: [[1988, 55627], [1989, 55475], [1990, 58464], [1991, 55134], [1992, 52436], [1993, 47139], [1994, 43962], [1995, 43238], [1996, 42395], [1997, 40854], [1998, 40993], [1999, 41822], [2000, 41147], [2001, 40474], [2002, 40604], [2003, 40044], [2004, 38816], [2005, 38060], [2006, 36984]]
+			},
+			"denmark": {
+				label: "Denmark",
+				data: [[1988, 3813], [1989, 3719], [1990, 3722], [1991, 3789], [1992, 3720], [1993, 3730], [1994, 3636], [1995, 3598], [1996, 3610], [1997, 3655], [1998, 3695], [1999, 3673], [2000, 3553], [2001, 3774], [2002, 3728], [2003, 3618], [2004, 3638], [2005, 3467], [2006, 3770]]
+			},
+			"sweden": {
+				label: "Sweden",
+				data: [[1988, 6402], [1989, 6474], [1990, 6605], [1991, 6209], [1992, 6035], [1993, 6020], [1994, 6000], [1995, 6018], [1996, 3958], [1997, 5780], [1998, 5954], [1999, 6178], [2000, 6411], [2001, 5993], [2002, 5833], [2003, 5791], [2004, 5450], [2005, 5521], [2006, 5271]]
+			},
+			"norway": {
+				label: "Norway",
+				data: [[1988, 4382], [1989, 4498], [1990, 4535], [1991, 4398], [1992, 4766], [1993, 4441], [1994, 4670], [1995, 4217], [1996, 4275], [1997, 4203], [1998, 4482], [1999, 4506], [2000, 4358], [2001, 4385], [2002, 5269], [2003, 5066], [2004, 5194], [2005, 4887], [2006, 4891]]
+			}
+		};
+
+		// hard-code color indices to prevent them from shifting as
+		// countries are turned on/off
+
+		var i = 0;
+		$.each(datasets, function(key, val) {
+			val.color = i;
+			++i;
+		});
+
+		// insert checkboxes 
+		var choiceContainer = $("#choices");
+		$.each(datasets, function(key, val) {
+			choiceContainer.append("<br/><input type='checkbox' name='" + key +
+				"' checked='checked' id='id" + key + "'></input>" +
+				"<label for='id" + key + "'>"
+				+ val.label + "</label>");
+		});
+
+		choiceContainer.find("input").click(plotAccordingToChoices);
+		
+		function plotAccordingToChoices() {
+
+			var data = [];
+
+			choiceContainer.find("input:checked").each(function () {
+				var key = $(this).attr("name");
+				if (key && datasets[key]) {
+					data.push(datasets[key]);
+				}
+			});
+
+			if (data.length > 0) {
+				$.plot("#placeholder", data, {
+					yaxis: {
+						min: 0
+					},
+					xaxis: {
+						tickDecimals: 0
+					}
+				}); //$.plot
+			}//if
+		}//plotAccordingToChoices()
+
+		plotAccordingToChoices();		
+
+}//showGraph()
 </script>
-<p>조회기간: <input type="text" id="from"> ~ <input type="text" id="to"></p>
+</head>
+<body>
 
-<!-- 
-<c:forEach var="data" items="${LIST}" varStatus="st">
-	<p>
-		<fmt:formatDate value="${data}" type="both" pattern="yyyy-MM-dd HH:mm"/>
-	</p>
-</c:forEach>
- -->
-
-			<div class="well col-sm-12">
-				<div class="col-sm-1">
-					<label>센서</label>
-				</div>
-				<form action="../test/test.hs">
-					<label class="checkbox-inline">
-						<input type="checkbox" name="nowSensor" value="4">입구 
-					</label>
-				
-					<label class="checkbox-inline">
-						<input type="checkbox" name="nowSensor" value="5">중간 
-					</label>
-				
-					<label class="checkbox-inline">
-						<input type="checkbox" name="nowSensor" value="6">출구 
-					</label>
-					<button>submit</button>
-				</form>
-				
+			<div class="demo-container">
+				<div id="placeholder" class="demo-placeholder" style="float:left; width:800px; height:600px"></div>
+				<p id="choices" style="float:right; width:135px;"></p>
 			</div>
 
-
-
-
+</body>
+</html>

@@ -26,6 +26,7 @@
 		<mvc:interceptor>
 			<mvc:mapping path="/Monitoring/*" />
 			<mvc:mapping path="/EventLog/*" />
+			<mvc:mapping path="/Graph/*" />
 			<bean class="com.hasom.util.IsLoginCheck" />
 		</mvc:interceptor>
 	</mvc:interceptors>

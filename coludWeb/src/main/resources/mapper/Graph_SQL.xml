@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="graph">
+	
+	<!-- g_no , nowFactor(f_table_name) → gs_no / s_display List 얻음 -->
+	<select id ="getGs_infos" parameterType="hashmap" resultType="hashmap">
+		SELECT gs.gs_no	, gs.s_display FROM Group_Sensor gs
+			WHERE	gs.g_no = #{g_no}
+			AND		gs.s_no	IN 
+				(
+					SELECT sf.s_no FROM Sensor_factor sf
+						WHERE sf.f_no = (Select f.f_no FROM Factor f WHERE f.f_table_name = #{f_table_name} )
+				)
+	</select>
+	
+	<!-- 조회기간에 해당하는 데이터를 "[UNIX_TIMESTAMP(측정일시) , 측정값]" 형태로 List에 저장 ex) [ [0,0] , [2,1] , [1,3] ] -->
+	<select id = "getDataList" parameterType="hashmap" resultType="string">
+		<![CDATA[ 
+		SELECT CONCAT('[' , UNIX_TIMESTAMP(date)*1000 , ',' , value ,']') AS data
+				FROM ${tableName}
+				WHERE date >= #{startTime}
+				AND		date <= #{endTime}
+				ORDER BY date DESC
+		]]>		
+	</select>
+	
+</mapper>	

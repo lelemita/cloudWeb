@@ -54,6 +54,33 @@ public class ServletUtil {
 		return hour;
 	}
 	
+	// yyyy-MM-dd  파라메터로 해당 날짜 찾기 (값 없으면 현재 날짜+지정일)
+	static public String getDay(String strDay, int addDay) throws Exception{
+		int year, month, date;
+		Calendar cal = Calendar.getInstance();	// 오늘날짜, 현재시각으로 생성됨
+		if (strDay==null || strDay.length() < 0) {
+			// 값 없으면 오늘 (0~24)
+			year = cal.get(Calendar.YEAR);
+			month = cal.get(Calendar.MONTH) + 1;
+			date = cal.get(Calendar.DATE) + addDay;
+			strDay = year + "-" + StringUtil.prependZero(month,2) + "-" + date ;
+		}		
+		return strDay;
+	}		
+
+	// HH:00:00 파라메터로 해당 시각 찾기 (값 없으면 지정 시각)
+	static public int getTime (String strTime, int defaultTime) throws Exception{
+		// 값 없고, default가 유효하지 않으면 0
+		int hour = 0;
+		if (strTime != null && strTime.length() > 0) {
+			hour = Integer.parseInt(strTime);
+		}else if(defaultTime >= 0 && defaultTime <23 ){
+			hour = defaultTime;
+		}
+		return hour;
+	}	
+	
+	
 	// "2017-02-01" , "HH:00:00" 양식 문자열로 받은 객체를 켈린더로 반환함
 	static public Calendar getCalendar(String date , int hour) {
 		String[] strDate = date.split("-");
