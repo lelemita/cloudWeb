@@ -153,11 +153,16 @@ $(document).ready(function(){
 	}
 	
 	// 어딘가로 보내는 함수 - form은 헤더에 있다
-	function move(url , targetGroup){
-		$("#targetGroup").val(targetGroup);
+	function move(url){
 		$("#gogo").attr("action" , url)
 		$("#gogo").submit();	
 	}
+	// 탭 이동 함수
+	function moveTab(url , targetGroup){
+		$("#targetGroup").val(targetGroup);
+		$("#gogo").attr("action" , url);
+		$("#gogo").submit();
+	}	
 	
 	// 페이지 이동 버튼 클릭 이벤트
 	function goPage (nowPage) {
@@ -216,7 +221,7 @@ $(document).ready(function(){
 					<li class="active"><a>${name}</a></li>
 				</c:if>
 				<c:if test="${st.index ne NOWGROUP}">
-					<li><a href="#" onclick="move('../EventLog/EventList.hs' , ${st.index})">${name}</a></li> 
+					<li><a href="#" onclick="moveTab('../EventLog/EventList.hs' , ${st.index})">${name}</a></li> 
 				</c:if>
 			</c:forEach>
 		</ul>

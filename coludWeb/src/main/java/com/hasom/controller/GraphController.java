@@ -76,25 +76,6 @@ public class GraphController {
 			}
 		}		
 
-//		String[] gs_no_s_display = data.getNowSensor();
-//		// 서비스로 전달할 내용
-//		ArrayList<Integer> gs_no_array = new ArrayList<Integer>();
-//		// 선택된 (gs_no , s_display)를 기억할 맵
-//		HashMap s_display_map = new HashMap();
-//		// 다시 모델로 보낼 ArrayList
-//		ArrayList<String> nowSensor_List = new ArrayList<String>();
-//		// 받은 값이 있다면,
-//		if (gs_no_s_display != null) {		
-//			// 받은 배열에서 gs_no 와 s_display를 분리 기억
-//			for (int i=0 ; i<gs_no_s_display.length ; i++) {
-//				nowSensor_List.add(gs_no_s_display[i]);
-//				String[] arr = gs_no_s_display[i].split("_");
-//				int gs_no = StringUtil.isNaturalNum(-1, arr[0].trim());
-//				gs_no_array.add(gs_no);
-//				s_display_map.put(gs_no, arr[1].trim() );
-//			}
-//		}		
-
 		//서비스
 		//1) 선택 화면에 필요한 내용
 		int g_no = 0;

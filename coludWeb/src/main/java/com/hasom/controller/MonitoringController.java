@@ -116,7 +116,7 @@ public class MonitoringController {
 		// 세션에서 ID 받음 // 검사는 인터셉터에서★★★(나중에)★★★
 		String u_id = (String) session.getAttribute("ID");
 		// 요청에서 nowGroup 받음, 유효성 검사 (자연수 아니면 0 )
-		String strG = (String) req.getParameter("nowGroup");
+		String strG = (String) req.getParameter("nowGroup");		
 		int nowGroup = StringUtil.isNaturalNum(0 , strG);
 		
 		// ( 이하 과정은 각각 서비스에서)

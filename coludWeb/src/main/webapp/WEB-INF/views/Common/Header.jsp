@@ -22,14 +22,25 @@
 	    </div>
 	    <div class="collapse navbar-collapse" id="myNavbar">
 	      <ul class="nav navbar-nav">
-		      <li id="MonitorList"><a href="#" onclick="move('../Monitoring/MonitorList.hs' , ${NOWGROUP})">실시간 현황</a></li>
-		      <li id="DataList"><a href="#" onclick="move('../Monitoring/DataList.hs' , ${NOWGROUP})">데이터 조회</a></li>
-		      <li id="EventList"><a href="#" onclick="move('../EventLog/EventList.hs' , ${NOWGROUP})">이벤트 목록</a></li>
-		      <li id="GraphData"><a href="#" onclick="move('../Graph/DataGraph.hs' , ${NOWGROUP})">그래프 조회</a></li>
+		      <li id="MonitorList"><a href="#" onclick="move('../Monitoring/MonitorList.hs')">실시간 현황</a></li>
+		      <li id="DataList"><a href="#" onclick="move('../Monitoring/DataList.hs' )">데이터 조회</a></li>
+		      <li id="EventList"><a href="#" onclick="move('../EventLog/EventList.hs')">이벤트 목록</a></li>
+		      <li id="GraphData"><a href="#" onclick="move('../Graph/DataGraph.hs' )">그래프 조회</a></li>
 		      <li id="MakeReport"><a href="#">보고서 작성</a></li>
+		      <!-- 관리자 로그인 -->
+		      <c:if test="${sessionScope.TYPE eq 'M'}">
+		      	<li id="SensorSetting"><a href="#" onclick="move('../Manager/SensorSetting.hs' )">센서 설정</a></li>
+		      </c:if>
+		      <!-- 담당자 로그인 -->
+		      <c:if test="${sessionScope.TYPE eq 'A'}">
+		      	<li id="SensorSetting"><a href="#" onclick="move('../Manager/SensorSetting.hs' )">센서 설정</a></li>
+		      	<li id="UserList"><a href="../Admin/UserList.hs">사용자 조회</a></li>
+		      </c:if>		      
+		      
+		      
 	      </ul>
 	      <ul class="nav navbar-nav navbar-right">
-		      <li><a href="#"><span class="glyphicon glyphicon-user"></span> ${NAME}</a></li>
+		      <li><a href="../Config/PersonalSetting.hs"><span class="glyphicon glyphicon-user"></span> ${NAME}</a></li>
 		      <li><a href="../Login/Logout.hs"><span class="glyphicon glyphicon-log-out"></span> 로그아웃</a></li>
 	      </ul>
 	    </div>

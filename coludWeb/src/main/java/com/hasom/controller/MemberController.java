@@ -34,7 +34,14 @@ public class MemberController {
 	 * 로그인 폼 요청
 	 */
 	@RequestMapping("/Login/LoginForm.hs")
-	public void loginForm() {	
+	public void loginForm(HttpServletRequest req, Model model) {
+		// 원래 하려던 요청
+		String uri = (String) req.getAttribute("toGo");
+		// 로그인 안내 메시지
+		String loginMsg = (String) req.getAttribute("loginMsg");
+		//System.out.println("★★★ loginMsgl : " + loginMsg);
+		
+		model.addAttribute("LOGINMSG", loginMsg);
 	}
 	
 	/* 

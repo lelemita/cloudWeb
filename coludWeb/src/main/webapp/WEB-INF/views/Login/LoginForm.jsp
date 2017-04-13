@@ -5,7 +5,7 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<title>로그인 : 하솜 정보기술 클라우드 시스템</title>
-	<!-- Bootstrap Core CSS -->
+		<!-- Bootstrap Core CSS -->
     <link href="../resources/bootstrap/sb-admin-2/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <!-- MetisMenu CSS -->
     <link href="../resources/bootstrap/sb-admin-2/vendor/metisMenu/metisMenu.min.css" rel="stylesheet">
@@ -24,7 +24,7 @@
             <div class="col-md-4 col-md-offset-4">
                 <div class="login-panel panel panel-default">
                     <div class="panel-heading">
-                        <h3 class="panel-title">초기 ID와 암호는 담당자에게 문의하세요</h3>
+                        <h3 id="loginMsg" class="panel-title" align="center">초기 ID와 암호는 담당자에게 문의하세요</h3>
                     </div>
                     <div class="panel-body">
                         <form method="post" id="lfrm" action="../Login/LoginProc.hs">
@@ -51,6 +51,14 @@
     <!-- jQuery -->
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
     <script>
+    $(document).ready(function() {
+		
+			if('${LOGINMSG}'.length > 0) {
+				$("#loginMsg").html('<font color="red"><b>${LOGINMSG}</b></font>');
+			}
+		
+		});
+    
 	 // LoginForm 에서 로그인 할때
 	    function login() {
 	    	var id = $("#u_id").val();

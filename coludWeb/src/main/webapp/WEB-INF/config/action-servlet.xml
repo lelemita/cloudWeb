@@ -16,6 +16,7 @@
 	
 	<!-- 인터셉터 등록을 한다 -->
 	<mvc:interceptors>
+	
 		<!-- 로거추가 -->
 		<mvc:interceptor>
 			<mvc:mapping path="/**"/>
@@ -27,9 +28,25 @@
 			<mvc:mapping path="/Monitoring/*" />
 			<mvc:mapping path="/EventLog/*" />
 			<mvc:mapping path="/Graph/*" />
+			<mvc:mapping path="/Config/*" />
 			<bean class="com.hasom.util.IsLoginCheck" />
 		</mvc:interceptor>
+
+		<!-- 관리자 이상 권한 체크 -->
+		<mvc:interceptor>
+			<mvc:mapping path="/Manager/*"/>
+			<bean class="com.hasom.util.IsManagerCheck" />
+		</mvc:interceptor>
+
+		<!-- 담당자 권한 체크 -->
+		<mvc:interceptor>
+			<mvc:mapping path="/Admin/*"/>
+			<bean class="com.hasom.util.IsAdminCheck" />
+		</mvc:interceptor>
+	
 	</mvc:interceptors>
+	
+	
 	
 	<!-- 컨트롤러를 사용하지 않는 뷰 설정 
 	<mvc:view-controller	path="/Main/Main.lost"	view-name="Main/Main"/>

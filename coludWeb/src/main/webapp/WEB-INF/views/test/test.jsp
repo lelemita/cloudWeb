@@ -122,11 +122,15 @@ function showGraph() {
 </script>
 </head>
 <body>
-
+	<!-- 
 			<div class="demo-container">
 				<div id="placeholder" class="demo-placeholder" style="float:left; width:800px; height:600px"></div>
 				<p id="choices" style="float:right; width:135px;"></p>
 			</div>
+	 -->
+			
+
+			
 
 </body>
 </html>

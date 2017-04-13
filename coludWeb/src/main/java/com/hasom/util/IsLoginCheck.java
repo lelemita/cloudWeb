@@ -22,7 +22,7 @@ public class IsLoginCheck extends HandlerInterceptorAdapter {
 		// 이 함수가 true를 반환하면, 컨트롤러가 제대로 실행되고
 		// 이 함수가 false를 반환하면, 컨트롤러가 실행되지 못한다.
 		
-		System.out.println(">> 멤버검사 인터셉터 실행");
+		//System.out.println(">> 멤버검사 인터셉터 실행");
 		// 이후 부터는 각자의 목적에 맞는 작업을 해주면 된다.
 		HttpSession session = req.getSession();
 		String id = (String) session.getAttribute("ID");
@@ -37,9 +37,9 @@ public class IsLoginCheck extends HandlerInterceptorAdapter {
 			
 			// 들어온 요청 파악하기
 			String uri = req.getRequestURI();
-			//	System.out.println(">> 인터셉터 toGo : " + uri);	// 점검용
-			
-			req.setAttribute("toGo", uri); 	//안해도 포워드라 자동으로 간다.  .. 아닌가 -ㅅ-;;
+			//안해도 포워드라 자동으로 가지만, 요청 내용이 다르다.
+			req.setAttribute("toGo", uri); 	
+			req.setAttribute("loginMsg", "회원만 접근 가능한 요청입니다.");
 			RequestDispatcher rd = req.getRequestDispatcher("../Login/LoginForm.hs");
 			rd.forward(req, resp);
 			return false;

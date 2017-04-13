@@ -16,7 +16,8 @@
 		<typeAlias alias="String" 	type="java.lang.String" />
 		<typeAlias alias="tableData" 	type="com.hasom.data.TableData" />		
 		<typeAlias alias="eventData" 	type="com.hasom.data.EventData" />	
-		
+		<typeAlias alias="userData" 	type="com.hasom.data.UserData" />	
+		<typeAlias alias="searchData" 	type="com.hasom.data.SearchData" />			
 		
 	</typeAliases>
 	

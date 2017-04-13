@@ -55,7 +55,7 @@
 	  width : 95%;
 	}
 </style>
-<script language="JavaScript">
+<script>
 	$(document).ready(function(){
 		// Header의 현재 메뉴 표시
 		$("li[id='MonitorList']").addClass("active");	
@@ -91,11 +91,16 @@
 	}
 	
 	// 어딘가로 보내는 함수 form은 헤더에 있다
-	function move(url , targetGroup){
-		$("#targetGroup").val(targetGroup);
-		$("#gogo").attr("action" , url)
+	function move(url){
+		$("#gogo").attr("action" , url);
 		$("#gogo").submit();
 	}
+	// 탭 이동 함수
+	function moveTab(url , targetGroup){
+		$("#targetGroup").val(targetGroup);
+		$("#gogo").attr("action" , url);
+		$("#gogo").submit();
+	}	
 	
 </script>
 </head>
@@ -115,7 +120,7 @@
 					<li class="active"><a href="#">${name}</a></li>
 				</c:if>
 				<c:if test="${st.index ne NOWGROUP}">
-					<li><a href="#" onclick="move('../Monitoring/MonitorList.hs' , ${st.index})">${name}</a></li> <!-- ★★★★★ (나중에) post 방식으로 바꾸자 -->
+					<li><a href="#" onclick="moveTab('../Monitoring/MonitorList.hs' , ${st.index})">${name}</a></li> <!-- ★★★★★ (나중에) post 방식으로 바꾸자 -->
 				</c:if>
 			</c:forEach>
 		</ul>

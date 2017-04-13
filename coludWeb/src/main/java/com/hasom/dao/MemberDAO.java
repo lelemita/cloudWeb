@@ -23,7 +23,7 @@ public class MemberDAO  extends AbstractDAO{
 	 * 로그인 처리 질의 실행 메서드
 	 */
 	public HashMap loginProc (HashMap map) throws Exception {
-		return (HashMap) selectOne("login.loginProc", map);
+		return (HashMap) selectOne("member.loginProc", map);
 	}
 	
 

@@ -3,7 +3,7 @@
 	"-//mybatis.org//DTD Mapper 3.0//EN" 
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 	
-<mapper namespace="login">
+<mapper namespace="member">
 
 	<!-- 로그인 처리 -->
 	<select id="loginProc" parameterType="map" resultType="map">
@@ -14,10 +14,121 @@
 		AND		u_pw		= #{pw}
 	</select>
 	
+	<!-- 개인정보 조회 -->
+	<select id="PersonalSetting" parameterType="string" resultType="userData">
+		SELECT	u.u_id, c.c_name, u.u_type, u.u_state, u.u_name, u.u_tel, u.u_mail, u.u_tel_on, u.u_mail_on, u.u_report 
+			FROM	User u , Company c
+			WHERE		u_id		= #{id}
+			AND			u.c_no = c.c_no
+	</select>		
+	
+	<!-- 해당 id의 담당그룹 목록 조회 -->
+	<select id="IDtoGroupList" parameterType="string" resultType="hashmap">
+		SELECT	g.g_no , g.g_name
+			FROM		Group_table g , Group_user gu
+			WHERE		gu.u_id = #{id}
+			AND			g.g_no = gu.g_no
+	</select>
+	
+	<!-- 소속 회사의 모든 그룹 목록 조회 -->
+	<select id="getCompanyGroups" parameterType="string" resultType="hashmap">
+		SELECT			g.g_no , g.g_name
+			FROM		Group_table g , User u
+			WHERE		u.u_id = #{id}
+			AND			g.c_no = u.c_no
+	</select>
 		
+	<!-- Ajax : 비밀번호 확인 → u_type 반환 -->
+	<select id="PasswordChk" parameterType="hashmap" resultType="string">
+		SELECT 	u_type 	FROM user
+		WHERE		u_id = #{id}
+		AND			u_pw = #{pw}
+	</select>
 	
+	<!-- 개인정보 수정 작업 -->
+	<update id="PersonalSettingProc" parameterType="userData">
+		UPDATE user
+			SET	u_tel    = #{u_tel    },
+					u_mail   = #{u_mail   },
+					u_tel_on = #{u_tel_on },
+					u_mail_on= #{u_mail_on},
+					u_report = #{u_report }
+			WHERE u_id = #{u_id}
+	</update>
+	<update id="newPassword" parameterType="userData">
+		UPDATE user
+			SET	u_pw   = #{new_pw}
+			WHERE u_id = #{u_id}
+	</update>
+
+	<!-- 담당자 : 직원 권한 수정 -->
+	<update id="modifyUserData" parameterType="userData">
+		UPDATE	User
+			SET	u_type = #{u_type} ,
+					u_state = #{u_state}
+			WHERE u_id = #{u_id}
+	</update>
+
 	
+	<!-- 담당자 : (목록수) 검색 내용 반영하여, 소속 회사의 사원 목록 조회하기 -->
+	<select id="getUserListCount" parameterType="searchData" resultType="int">
+			SELECT	COUNT(DISTINCT u.u_id) AS CNT
+			FROM	User u , Group_user gu , Group_table g
+			WHERE	u.c_no = (SELECT u1.c_no FROM User u1 WHERE u1.u_id = #{u_id} )
+			AND 	u.u_state != 'X'
+		<if test="scope eq 'u_name'">
+			AND		u.u_name LIKE CONCAT('%' , #{keyword} , '%' )
+		</if>
+		<if test="scope eq 'u_id'">
+			AND		u.u_id LIKE CONCAT('%' , #{keyword} , '%' )
+		</if>
+		<if test="scope eq 'u_tel'">
+			AND		u.u_tel LIKE CONCAT('%' , #{keyword} , '%' )
+		</if>
+		<if test="scope eq 'u_mail'">
+			AND		u.u_mail LIKE CONCAT('%' , #{keyword} , '%' )
+		</if>
+		<if test="scope eq 'g_name'">
+			AND		gu.g_no = g.g_no	
+			AND		u.u_id = gu.u_id	
+			AND		g.g_name = #{keyword}
+		</if>
+	</select>
 	
+	<!-- 담당자 : 검색 내용 반영하여, 소속 회사의 사원 목록 조회하기 -->
+	<select id="getUserList" parameterType="searchData" resultType="userData">
+			SELECT	DISTINCT u.u_id, u.u_name, u.u_type, u.u_state
+			FROM	User u , Group_user gu , Group_table g
+			WHERE	u.c_no = (SELECT u1.c_no FROM User u1 WHERE u1.u_id = #{u_id} )
+			AND 	u.u_state != 'X'
+		<if test="scope eq 'u_name'">
+			AND		u.u_name LIKE CONCAT('%' , #{keyword} , '%' )
+		</if>
+		<if test="scope eq 'u_id'">
+			AND		u.u_id LIKE CONCAT('%' , #{keyword} , '%' )
+		</if>
+		<if test="scope eq 'u_tel'">
+			AND		u.u_tel LIKE CONCAT('%' , #{keyword} , '%' )
+		</if>
+		<if test="scope eq 'u_mail'">
+			AND		u.u_mail LIKE CONCAT('%' , #{keyword} , '%' )
+		</if>
+		<if test="scope eq 'g_name'">
+			AND		u.u_id = gu.u_id
+			AND		gu.g_no = g.g_no		
+			AND		g.g_name = #{keyword}
+		</if>
+		ORDER BY u.u_type , u.u_state , u.u_name
+	</select>
 	
-	
+	<!-- group_user table에서 해당 아이디의 row를 모두 삭제 -->
+	<delete id="deleteUserGroup" parameterType="string">
+		DELETE FROM group_user
+			WHERE u_id = #{u_id}
+	</delete>
+	<!-- group_user table에 입력받은 g_no - u_id 입력 -->
+	<insert id="insertNewUserGroups" parameterType="userData">
+		INSERT INTO group_user VALUES (#{g_no} , #{u_id})
+	</insert>
+		
 </mapper>
