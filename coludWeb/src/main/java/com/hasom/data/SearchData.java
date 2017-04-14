@@ -10,6 +10,7 @@ import com.hasom.util.PageUtil;
 public class SearchData {
 	// 사용자 정보 또는 상세보기 대상 id
 	private String u_id;
+	
 	// 검색 범위 및 검색어
 	private String scope;
 	private String keyword;
@@ -22,11 +23,19 @@ public class SearchData {
 	private UserData userData;
 	// 소속 회사의 모든 그룹 정보
 	private ArrayList allGroups;
+	// 팝업으로 띄울 메시지
+	private String popMsg;
 	
 	
 	//getter&setter
 	public ArrayList getUserDataList() {
 		return userDataList;
+	}
+	public String getPopMsg() {
+		return popMsg;
+	}
+	public void setPopMsg(String popMsg) {
+		this.popMsg = popMsg;
 	}
 	public void setUserDataList(ArrayList userDataList) {
 		this.userDataList = userDataList;

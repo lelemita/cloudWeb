@@ -74,4 +74,14 @@ public class ConfigDAO  extends AbstractDAO{
 		insert("member.insertNewUserGroups" , paramap);
 	}
 	
+	// 아이디 중복 검사
+	public String IDchk(String id) throws Exception {
+		return (String) selectOne("member.IDchk" , id);
+	}
+
+	// 사용자 등록 작업
+	public void userRegistryProc(UserData userData) {
+		insert("member.userRegistryProc" , userData);		
+	}
+	
 }//class

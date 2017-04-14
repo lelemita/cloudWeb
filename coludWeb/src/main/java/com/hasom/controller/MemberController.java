@@ -63,6 +63,8 @@ public class MemberController {
 			session.setAttribute("ID", id);
 			session.setAttribute("NAME", map.get("u_name"));
 			session.setAttribute("TYPE", map.get("u_type"));
+			session.setAttribute("C_NAME", map.get("c_name"));
+			session.setAttribute("C_NO", map.get("c_no"));
 			// 회원이면, 모니터링 페이지로 이동
 			return "redirect:../Monitoring/MonitorList.hs";
 		}

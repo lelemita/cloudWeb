@@ -156,7 +156,58 @@ public class ConfigService {
 			ex.printStackTrace();
 		}
 	}
-	
+
+	/* 20170413 남연우
+	 * 담당자 : 사용자 등록 폼 요청 필요 정보 : 담당 그룹 목록
+	 */
+	public SearchData prepareUserRegist(SearchData data, String u_id) {
+		try {
+			data.setAllGroups(dao.IDtoCompanyGroup(u_id));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return data;
+	}
+
+	// id 중복 검사
+	public String IDChk(String id) {
+		String result = "";
+		try {
+			String temp = dao.IDchk(id);
+			if (temp!=null && temp.length()>0) {
+				result=temp;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+
+	//사용자 등록 작업
+	public boolean userRegistryProc(UserData userData) {
+		boolean isSuccess = true;
+		try{
+			dao.userRegistryProc(userData);
+		}catch (Exception ex) {
+			isSuccess = false;
+			ex.printStackTrace();
+		}
+		return isSuccess;
+	}
+
+	/*
+	 * 담당자 : 신규 회원 담당 그룹 등록
+	 */
+	public void newUserGroup (UserData data) {
+		for(String strG_no : data.getCheckedGroups()) {
+			try {
+				dao.insertNewUserGroups(data.getU_id() , Integer.parseInt(strG_no));					
+			}catch (Exception ex) {
+				ex.printStackTrace();
+				continue;
+			}
+		}//for
+	}	
 	
 	
 	

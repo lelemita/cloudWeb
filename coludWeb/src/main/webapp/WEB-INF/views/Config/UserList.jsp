@@ -75,6 +75,13 @@
 		$("#sfrm").attr("action" , "../Admin/UserView.hs");
 		$("#sfrm").submit();
 	}
+	
+	// sfrm 보내는 이벤트
+	function sendSfrm(url) {
+		$("#sfrm").attr("action" , url);
+		$("#sfrm").submit();
+	}
+	
 </script>
 </head>
 <body>
@@ -116,8 +123,9 @@
 				</c:forEach>							
 			</table>	
 			
+
 			<!-- 페이지 이동 기능 : [이전] [1][2][3][4][5] [다음] 	-->
-			<div  class="col-sm-12 text-center">
+			<div class="col-sm-10 text-center">
 				<ul class="pagination">
 					<c:if test="${DATA.pInfo.startPage ne 1}">
 						<li><a href="#" onclick="goPage(${DATA.pInfo.startPage-1});">이전</a></li> 
@@ -135,7 +143,11 @@
 					</c:if>	
 				</ul>
 			</div>		
-			
+				
+			<!-- 사용자 등록 버튼 -->
+			<div class="col-sm-2">
+				<button class="btn btn-default" onclick="sendSfrm('../Admin/UserRegistry.hs');">사용자 등록</button>				
+			</div>
 			
 		</div><!-- well -->
 	</div><!-- container -->

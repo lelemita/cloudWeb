@@ -69,7 +69,7 @@ public class ConfigController {
 	@RequestMapping("/Config/PasswordChk.hs")
 	public String PasswordChk (HttpServletRequest req, Model model) {
 		String id = req.getParameter("id");
-		String pw = req.getParameter("pw");	
+		String pw = req.getParameter("pw");			
 		// 비밀번호 확인 서비스
 		// 맞으면 해당회원의 u_type 반환 / 아니면 'X' 반환
 		model.addAttribute("u_type" , service.PasswordChk(id, pw));
@@ -177,26 +177,77 @@ public class ConfigController {
 		
 	}		
 	
+	/* 20170413 남연우
+	 * 담당자 : 신규 사용자 등록 폼 요청
+	 */
+	@RequestMapping("/Admin/UserRegistry.hs")
+	public String UserRegistry(HttpSession session, Model model, SearchData data) {
+		//파라메터 받기
+		// 1) (세션) ID 		// 검사는 인터셉터에서 한다
+		String u_id = (String) session.getAttribute("ID");
+		// 2) 그외 유효성 검사 : scope, keyword, nowPage
+		data = checkSearchData(data);	
+		
+		//필요한 정보 서비스 :  담당 그룹 목록
+		data = service.prepareUserRegist(data, u_id);
+		
+		//모델에 전달 및 뷰 호출 (릴레이)
+		model.addAttribute("DATA", data);
+		return "/Config/UserRegistry";
+	}
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	/*
+	 * Ajax : 아이디 중복 검사 요청
+	 */
+	@RequestMapping("/Admin/IDcheck.hs")
+	public String IDChk (HttpServletRequest req, Model model) {
+		String id = req.getParameter("id");
+		// 비밀번호 확인 서비스
+		// 맞으면 해당회원의 u_type 반환 / 아니면 'X' 반환
+		String temp = service.IDChk(id);
 
-
+		model.addAttribute("u_type" , temp);
+		return "Config/PasswordChk";
+	}	
+	
+	/* 20170414 남연우
+	 * 담당자 : 신규 사용자 등록 작업 요청
+	 */
+	@RequestMapping("/Admin/UserRegistryProc.hs")
+	public String UserRegistryProc (HttpSession session, Model model, SearchData data, UserData userData) {
+		// 결과 메시지
+		String popMsg = "";
+		//파라메터 받기
+		// 1) (세션) ID 		// 검사는 인터셉터에서 한다
+		String u_id = (String) session.getAttribute("ID");
+		// 2) 그외 유효성 검사 : scope, keyword, nowPage
+		data = checkSearchData(data);	
+		// 3) 나중에 상세보기로 가기 위해서 id 정보 전달
+		data.setU_id(userData.getU_id());
+		
+		//사용자 등록
+		boolean isSuccess = service.userRegistryProc(userData);
+		
+		//담당 그룹 등록
+		if( !isSuccess ) {
+			popMsg = "Fail to register new user";
+			return "redirect:../Admin/UserRegistry.hs?popMsg="	+ popMsg	;
+		}
+		
+		if( userData.getCheckedGroups()!=null && userData.getCheckedGroups().length != 0 ){			
+			service.newUserGroup(userData);	
+		}
+		
+		//popMsg = "신규 사용자 등록 완료"; // 한글깨짐 → 나중에 해결
+		//모델에 전달 및 뷰 호출	
+		// ★★★★ 나중에 Post 방식으로 바꾸자ㅠㅠㅠ
+		return "redirect:../Admin/UserView.hs?u_id=" + data.getU_id()
+					+ "&scope="		+ data.getScope()           
+					+ "&keyword="	+ data.getKeyword()         
+					+ "&nowPage="	+ data.getNowPage()
+					+ "&popMsg="	+ popMsg	; 
+	}
+		
 	/*
 	 * 관리자 : 센서 설정 하기
 	 */

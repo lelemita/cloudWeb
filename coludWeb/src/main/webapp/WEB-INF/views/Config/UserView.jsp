@@ -54,6 +54,13 @@
 </style>
 <script>
 	$(document).ready(function(){
+		//pop 메시지
+		if("${DATA.popMsg}".length!=0) {
+			alert("${DATA.popMsg}");
+		}else {
+			alert("pop 없음");
+		}
+		
 		//초기 세팅
 		// 1) u_type, u_state
 		$("#u_type").val("${DATA.userData.u_type}").prop("selected",true);
@@ -81,6 +88,7 @@
 	function modify(url) {
 		//비밀번호 검사 (Ajax)
 		var pw = prompt("비밀번호를 입력해주세요");
+		if(pw.length==0) { return; }
 		checkPassword(pw , url);
 		// 이하 작업은 checkPassword(pw) 에서 진행
 	}

@@ -34,24 +34,22 @@ public class MemberService  implements SampleService{
 		HashMap map = new HashMap();
 		map.put("id", id);
 		map.put("pw", pw);
-		System.out.println(id + " : " + pw);
+		//System.out.println(id + " : " + pw);
 		HashMap result = dao.loginProc(map);
 
 		// 결과 검사
 		boolean isMember = false;
 		if ( result == null ) {
-			System.out.println(">> 회원 아님");
+			//System.out.println(">> 회원 아님");
 			result = new HashMap();
 		}
 		else {
 			isMember = true;
 			result.put("u_id", id);
-			System.out.println(">> 회원이다 : " + result.get("u_name"));
+			//System.out.println(">> 회원이다 : " + result.get("u_name"));
 		}
 		result.put("ISMEMBER", isMember);
-		
-		System.out.println("서비스 끝");
-	
+
 		return result;
 	}
 

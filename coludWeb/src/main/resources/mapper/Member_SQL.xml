@@ -7,11 +7,12 @@
 
 	<!-- 로그인 처리 -->
 	<select id="loginProc" parameterType="map" resultType="map">
-		SELECT	u_name, u_type
-		FROM	User
-		WHERE	u_state	= 'Y'
-		AND		u_id		= #{id}
-		AND		u_pw		= #{pw}
+		SELECT	u.u_name, u.u_type, u.c_no, c.c_name
+		FROM	User u , Company c
+		WHERE	u.u_state	= 'Y'
+		AND		u.c_no		= c.c_no
+		AND		u.u_id		= #{id}
+		AND		u.u_pw		= #{pw}
 	</select>
 	
 	<!-- 개인정보 조회 -->
@@ -44,6 +45,12 @@
 		WHERE		u_id = #{id}
 		AND			u_pw = #{pw}
 	</select>
+
+	<!-- Ajax : id 중복 확인 -->
+	<select id="IDchk" parameterType="string" resultType="string">
+		select	u_id 	from user
+		where 	u_id = #{id}	
+	</select>	
 	
 	<!-- 개인정보 수정 작업 -->
 	<update id="PersonalSettingProc" parameterType="userData">
@@ -130,5 +137,14 @@
 	<insert id="insertNewUserGroups" parameterType="userData">
 		INSERT INTO group_user VALUES (#{g_no} , #{u_id})
 	</insert>
+		
+	<!-- 사용자 등록 작업 -->	
+	<insert id="userRegistryProc" parameterType="userData">
+		INSERT INTO user VALUES (
+			#{u_id}, 	#{u_pw}, 	#{c_no}, 	#{u_type}, 	#{u_state}, #{u_name},
+			#{u_tel}, #{u_mail}, 	#{u_tel_on}, 	#{u_mail_on}, 	#{u_report}
+		)		
+	</insert>	
+		
 		
 </mapper>
