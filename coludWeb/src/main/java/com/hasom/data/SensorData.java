@@ -9,6 +9,7 @@ import java.util.Date;
  *  SQL에서 resultType으로 그냥 지정하면 되는데...
  *  (물론, 지금 상태로 바로 그렇게 하면 안됨.)
  */
+// 이름을 잘못 지은듯...ㅠㅠ vauleData로 할걸
 public class SensorData {
 
 	// 센서 번호 

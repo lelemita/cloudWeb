@@ -47,7 +47,7 @@
 				<input type="hidden" name="nowPage" value="${DATA.nowPage}">
 						
 				<div class="col-sm-12" style="padding-top: 20px"><!-- 한줄로 표시 -->							
-					<div class="form-group col-sm-6" ">
+					<div class="form-group col-sm-6">
 						<label class="col-sm-4">아이디 : </label>
 						<div class="col-sm-7">
 							<input type="text" class="form-control" id="temp_id" placeholder="신규 ID"/>

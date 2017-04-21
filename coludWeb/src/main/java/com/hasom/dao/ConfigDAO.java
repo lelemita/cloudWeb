@@ -6,6 +6,7 @@ import java.util.HashMap;
 import org.springframework.stereotype.Repository;
 
 import com.common.dao.AbstractDAO;
+import com.hasom.data.JobData;
 import com.hasom.data.SearchData;
 import com.hasom.data.UserData;
 /*
@@ -83,5 +84,55 @@ public class ConfigDAO  extends AbstractDAO{
 	public void userRegistryProc(UserData userData) {
 		insert("member.userRegistryProc" , userData);		
 	}
+
+	public ArrayList getSensorInfo(HashMap paramap) throws Exception {
+		return (ArrayList) selectList("config.SensorInfos" , paramap);
+	}
+
+	// 설정 변경 사항 저장 : s_display
+	public void change_s_display(HashMap paramap) {
+		update("config.saveChange_s_display" , paramap);
+	}
+
+	// 설정 변경 사항 저장
+	public void changeSettings(HashMap paramap) {
+		update("config.saveChange" , paramap);
+	}
 	
+	//해당 그룹 + 표준 잡 정보 서비스
+	public ArrayList<JobData> getJobList(int g_no) throws Exception {
+		return (ArrayList<JobData>) selectList("config.getJobList" , g_no);
+	}
+
+	//해당 j_no 삭제 
+	public void deleteJob(int j_no) {
+		this.delete("config.deleteJob", j_no);
+	}
+
+	// 수정, 복제인 경우, 해당 잡의 내용을 찾아서 보냄
+	public JobData getJobData(int j_no) throws Exception {
+		return (JobData) selectOne("config.getJobData" , j_no);
+	}
+
+	// 전송방법 종류 조회
+	public ArrayList<String> getJobTypeList() throws Exception {
+		return (ArrayList<String>) selectList("config.getJobTypeList");
+	}
+
+	// 잡 등록 서비스
+	public void insertJob(JobData data) throws Exception {
+		insert("config.insertJob" , data);			
+	}
+	// 잡 수정 서비스
+	public void updateJob(JobData data) throws Exception {
+		update("config.updateJob", data);
+	}
+	// 해당 그룹의 통신 장애, 복구에 대한 대응 잡 내용 조회
+	public ArrayList<JobData> getEventJobList(HashMap paramap) throws Exception {
+		return (ArrayList<JobData>)selectList("config.getEventJobList",paramap);
+	}
+	// e_no , (g_no or l_no) → j_nos 구하기
+	public String getJ_nos(HashMap paramap) throws Exception {
+		return (String)selectOne("config.getJ_nos", paramap);
+	}
 }//class

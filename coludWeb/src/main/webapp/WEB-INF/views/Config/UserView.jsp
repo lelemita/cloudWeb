@@ -57,8 +57,6 @@
 		//pop 메시지
 		if("${DATA.popMsg}".length!=0) {
 			alert("${DATA.popMsg}");
-		}else {
-			alert("pop 없음");
 		}
 		
 		//초기 세팅

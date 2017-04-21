@@ -1,5 +1,7 @@
 package com.hasom.controller;
 
+import java.util.ArrayList;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -8,13 +10,16 @@ import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
+import com.hasom.data.JobData;
 import com.hasom.data.SearchData;
 import com.hasom.data.UserData;
 import com.hasom.service.ConfigService;
+import com.hasom.service.MonitoringService;
 import com.hasom.util.StringUtil;
 
 /* A.D.2017.03.21.~ 남연우.
@@ -23,6 +28,8 @@ import com.hasom.util.StringUtil;
 @Controller
 public class ConfigController {
     Logger log = Logger.getLogger(this.getClass());
+	@Resource(name="monitoringService")
+	private MonitoringService mService;
 	@Resource(name="configService")
 	private ConfigService service;
 	
@@ -252,12 +259,311 @@ public class ConfigController {
 	 * 관리자 : 센서 설정 하기
 	 */
 	@RequestMapping("/Manager/SensorSetting.hs")
-	public String SensorSetting (HttpSession session, Model model) {
+	public ModelAndView SensorSetting (HttpServletRequest req, HttpSession session, ModelAndView mv) {
 		//파라메터 받기
 		// 1) (세션) ID 		// 검사는 인터셉터에서 한다
 		String u_id = (String) session.getAttribute("ID");
+		String strNowGr = req.getParameter("nowGroup");
+		int nowGroup = 0;
+		try {
+			nowGroup = Integer.parseInt(strNowGr); 
+		} catch (Exception ex) {
+			// 값이 없거나 숫자 양식이 아님 → 그대로 0				
+		}
+		String nowFactor = req.getParameter("nowFactor");
+		if (nowFactor==null) { nowFactor = ""; }
 		
+		//서비스
+		//1) 선택 화면에 필요한 내용
+		int g_no = 0;
+		ArrayList g_names	= null;
+		ArrayList f_names	= null;
+		try {
+			//	(1) 그룹 목록 ==> 그룹 탭
+			// 그 아이디[u_id]가 관리하는 그룹 번호(g_no[]) 목록 확인 (Group_user)
+			ArrayList g_nos = mService.getG_nos(u_id);
+			// (해당 사용자의) 모든 g_no[]에 대한 g_name[] 확인 ==> 탭 이름 결정
+			//	(나중에) 이름 길이에 신경써야 함 (ex. 5글자 이상 ... 처리)
+			g_names = mService.getG_names(u_id);
+			// 그 그룹 갯수[g_count] 저장
+			int g_count = g_names.size();
+			// g_count < 0 이면, 담당 그룹이 없다는 페이지 리턴
+			if (g_count < 0) {
+				mv.setViewName( "/Monitoring/NoGroup" );
+				return mv;
+			}
+			// nowGroup > g_count 이면, nowGroup = 0 
+			if (nowGroup > g_count) {
+				nowGroup = 0 ;
+			}			
+			// (2) g_no = g_no[nowGroup] 에 대해서 다음 실행
+			g_no = (Integer) g_nos.get(nowGroup);
+
+			// (3) 해당 그룹의 모든 측정요소 목록 (중복제외)
+			f_names = mService.getF_names(g_no);
+			
+			// (4) 해당그룹, 해당 요소의 센서들에 대한 정보 서비스
+			if(nowFactor.length()!=0) {
+				ArrayList sensorInfos = service.getSensorInfos(g_no, nowFactor);				
+				mv.addObject("SENSORINFOS" , sensorInfos);
+			}
+			
+		}
+		catch (Exception ex) {
+			log.info(">> 그룹 정보조회 실패");	
+			String errMsg = "그룹 정보를 조회할 수 없습니다.";
+			mv.addObject("ERRMSG", errMsg);
+			// ★★★★ (나중에) 에러 안내 페이지 만들자
+		}		
 		
-		return "/Config/SensorSetting";
+		//모델 보내기
+		mv.addObject("G_NAMES", g_names);			
+		mv.addObject("F_NAMES", f_names);		
+		mv.addObject("NOWGROUP", nowGroup);	
+		mv.addObject("NOWFACTOR", nowFactor);
+
+		mv.setViewName("/Config/SensorSetting");
+		return mv;
 	}	
+	
+	/*
+	 *  센서 설정 변경내용 반영하기
+	 */
+	@RequestMapping("/Manager/SensorSettingProc.hs")
+	public String SensorSetting (HttpServletRequest req, HttpSession session, Model model) {
+		//파라메터 받기
+		// id
+		String u_id = (String) session.getAttribute("ID");
+		// nowGroup
+		String strNowGr = req.getParameter("nowGroup");
+		int nowGroup = 0;
+		try { nowGroup = Integer.parseInt(strNowGr); 
+		} catch (Exception ex) { /* 값이 없거나 숫자 양식이 아님 → 그대로 0*/}
+		// nowFactor
+		String nowFactor = req.getParameter("nowFactor");
+		if (nowFactor==null) { nowFactor = ""; }
+		// changes : 변경사항 리스트
+		String[] changes = req.getParameterValues("changes");
+
+		//서비스 : 각 변경사항 저장
+		boolean isSuccess = service.saveChangeSettings(changes);
+		
+		//모델 보내기
+		// 미구현 : model.addAttribute("isSuccess", isSuccess);
+		model.addAttribute("nowGroup", nowGroup);	
+		model.addAttribute("nowFactor", nowFactor);
+				
+		return "redirect: ../Manager/SensorSetting.hs";
+	}
+	
+	/*
+	 * 관리자/담당자 메뉴 페이지 호출
+	 */
+	@RequestMapping("/Manager/ConfigMenu.hs")
+	public String ConfigMenu() {
+		return "/Config/ConfigMenu";
+	}
+	
+	/*
+	 * job 관리 페이지 요청
+	 */
+	@RequestMapping("/Manager/JobSetting.hs")
+	public String JobSetting(HttpServletRequest req, HttpSession session, Model model) {
+		//파라메터 받기
+		// id
+		String u_id = (String) session.getAttribute("ID");
+		// nowGroup
+		String strNowGr = req.getParameter("nowGroup");
+		int nowGroup = 0;
+		try { nowGroup = Integer.parseInt(strNowGr); 
+		} catch (Exception ex) { /* 값이 없거나 숫자 양식이 아님 → 그대로 0*/}
+
+		//서비스
+		//1) 선택 화면에 필요한 내용
+		int g_no = 0;
+		ArrayList g_names	= null;
+		ArrayList f_names	= null;
+		try {
+			//	(1) 그룹 목록 ==> 그룹 탭
+			// 그 아이디[u_id]가 관리하는 그룹 번호(g_no[]) 목록 확인 (Group_user)
+			ArrayList g_nos = mService.getG_nos(u_id);
+			// (해당 사용자의) 모든 g_no[]에 대한 g_name[] 확인 ==> 탭 이름 결정
+			//	(나중에) 이름 길이에 신경써야 함 (ex. 5글자 이상 ... 처리)
+			g_names = mService.getG_names(u_id);
+			// 그 그룹 갯수[g_count] 저장
+			int g_count = g_names.size();
+			// g_count < 0 이면, 담당 그룹이 없다는 페이지 리턴
+			if (g_count < 0) {
+				return "/Monitoring/NoGroup";
+			}
+			// nowGroup > g_count 이면, nowGroup = 0 
+			if (nowGroup > g_count) {
+				nowGroup = 0 ;
+			}			
+			// (2) g_no = g_no[nowGroup] 에 대해서 다음 실행
+			g_no = (Integer) g_nos.get(nowGroup);
+		}
+		catch (Exception ex) {
+			log.info(">> 그룹 정보조회 실패");	
+			String errMsg = "그룹 정보를 조회할 수 없습니다.";
+			model.addAttribute("ERRMSG", errMsg);
+			// ★★★★ (나중에) 에러 안내 페이지 만들자
+		}	
+		//2) 해당 그룹 + 표준 잡 정보 목록 서비스
+		ArrayList<JobData> jobList = service.getJobList(g_no);
+
+		//모델 보내기
+		model.addAttribute("G_NAMES", g_names);				
+		model.addAttribute("NOWGROUP", nowGroup);
+		model.addAttribute("G_NO", g_no);
+		model.addAttribute("JOBLIST", jobList);
+		return "/Config/JobSetting";
+	}
+	
+	/*
+	 * 잡 삭제하기
+	 */
+	@RequestMapping("/Manager/DeleteJob.hs")
+	public ModelAndView DeleteJob( HttpServletRequest req, HttpSession session,
+			@RequestParam(value="nowGroup", defaultValue="0")	int nowGroup , 
+			@RequestParam(value="j_no", required=true)			int j_no		) {
+		
+		//해당 j_no 삭제 서비스
+		boolean isSuccess = service.deleteJob(j_no);
+		//뷰 부르기
+		RedirectView rv = new RedirectView("../Manager/JobSetting.hs");
+		rv.setExposeModelAttributes(true);	// false로 하면, 주소줄에 속성을 감춘다는데, 아예 전달이 안된다..ㅠ
+		ModelAndView mv = new ModelAndView(rv);
+		mv.addObject("nowGroup", nowGroup);
+		return mv;
+	}
+
+	/*
+	 * 잡 수정, 복제, 신규등록 폼 요청
+	 */
+	@RequestMapping("/Manager/AdjustJobForm.hs")
+	public String AdjustJobForm( Model model,
+			@RequestParam(value="g_no", required=true)			int g_no ,
+			@RequestParam(value="nowGroup",	defaultValue="0")	int nowGroup ,
+			@RequestParam(value="workType",	defaultValue="")	String workType ,
+			@RequestParam(value="j_no",		defaultValue="-1", required=false)	int j_no		) {
+		
+		//서비스
+		// 전송방법 종류 조회
+		ArrayList<String> typeList = service.getJobTypeList();
+		
+		// 수정, 복제인 경우, 해당 잡의 내용을 찾아서 보냄
+		JobData data = new JobData();
+		if(workType.indexOf("신규")<0){
+			data = service.getJobData(j_no);			
+		}
+		
+		//뷰 부르기
+		model.addAttribute("NOWGROUP", nowGroup);
+		model.addAttribute("G_NO", g_no);
+		model.addAttribute("WORKTYPE", workType);
+		model.addAttribute("JOBTYPES" , typeList);
+		model.addAttribute("DATA", data);
+		return "/Config/AdjustJobForm";
+	}		
+	
+	
+	/*
+	 * 잡 수정, 복제, 신규등록 작업
+	 */
+	@RequestMapping("/Manager/AdjustJobProc.hs")
+	public ModelAndView AdjustJobProc ( JobData data,
+			@RequestParam(value="nowGroup",	defaultValue="0")	int nowGroup ,
+			@RequestParam(value="workType", required=true)	String workType ) {
+		
+		boolean isSuccess = false;
+		// 잡 등록, 수정 서비스
+		isSuccess=service.adjustJob(workType,data);
+			
+		//뷰 부르기
+		RedirectView rv = new RedirectView("../Manager/JobSetting.hs");
+		rv.setExposeModelAttributes(true);	// false로 하면, 주소줄에 속성을 감춘다는데, 아예 전달이 안된다..ㅠ
+		ModelAndView mv = new ModelAndView(rv);
+		mv.addObject("nowGroup", nowGroup);
+		mv.addObject("msg", isSuccess? workType+" 처리완료":workType+" 과정에서 에러"); //나중에 쓰자 (미구현)
+		return mv;
+	}	
+		
+	/*
+	 * 관리자, 담당자 : 이벤트 별, Job 설정 현황 폼 요청
+	 */
+	@RequestMapping("/Manager/EventJobForm.hs")
+	public String EventJobForm( HttpSession session, Model model,
+			@RequestParam(value="nowGroup",	defaultValue="0")		int nowGroup ,
+			@RequestParam(value="nowFactor", defaultValue="CON")	String nowFactor ) {
+		//파라메터 받기
+		// 1) (세션) ID 		// 검사는 인터셉터에서 한다
+		String u_id = (String) session.getAttribute("ID");
+		//서비스
+		//1) 선택 화면에 필요한 내용
+		int g_no = 0;
+		ArrayList g_names	= null;
+		ArrayList f_names	= null;
+		try {
+			//	(1) 그룹 목록 ==> 그룹 탭
+			// 그 아이디[u_id]가 관리하는 그룹 번호(g_no[]) 목록 확인 (Group_user)
+			ArrayList g_nos = mService.getG_nos(u_id);
+			// (해당 사용자의) 모든 g_no[]에 대한 g_name[] 확인 ==> 탭 이름 결정
+			//	(나중에) 이름 길이에 신경써야 함 (ex. 5글자 이상 ... 처리)
+			g_names = mService.getG_names(u_id);
+			// 그 그룹 갯수[g_count] 저장
+			int g_count = g_names.size();
+			// g_count < 0 이면, 담당 그룹이 없다는 페이지 리턴
+			if (g_count < 0) {
+				return "/Monitoring/NoGroup";
+			}
+			// nowGroup > g_count 이면, nowGroup = 0 
+			if (nowGroup > g_count) {
+				nowGroup = 0 ;
+			}			
+			// (2) g_no = g_no[nowGroup] 에 대해서 다음 실행
+			g_no = (Integer) g_nos.get(nowGroup);
+			// (3) 해당 그룹의 모든 측정요소 목록 (중복제외)
+			f_names = mService.getF_names(g_no);
+		}
+		catch (Exception ex) {
+			log.info(">> 그룹 정보조회 실패");	
+			String errMsg = "그룹 정보를 조회할 수 없습니다.";
+			model.addAttribute("ERRMSG", errMsg);
+			// ★★★★ (나중에) 에러 안내 페이지 만들자
+		}		
+
+		//모델 보내기1
+		model.addAttribute("NOWGROUP", nowGroup);	
+		model.addAttribute("NOWFACTOR", nowFactor);
+		model.addAttribute("G_NAMES", g_names);			
+		model.addAttribute("F_NAMES", f_names);		
+		model.addAttribute("G_NO", g_no);
+		
+		//통신 장애에 대한 설정인 경우
+		if(nowFactor.equals("CON")){
+			// 해당 그룹의 통신 장애, 복구에 대한 대응 잡 내용 조회
+			ArrayList<JobData> disList = service.getEventJobList(ConfigService.DISCONTACT , g_no);
+			ArrayList<JobData> conList = service.getEventJobList(ConfigService.CONTACT , g_no);
+			model.addAttribute("DISCON" , disList);
+			model.addAttribute("CONACT", conList);
+			return "/Config/EventJobForm_Contact";
+		}
+		//요소에 대한 설정인 경우
+		else {
+			// 해당그룹, 요소의 모든 l_no 목록조회
+			// 각 l_no 마다 다음 반복
+				//	(나중에) 센서별로 발생 가능한 이벤트를 DB에 저장하자★★★★★
+				// 상한일탈이벤트 대응 잡 목록 확인
+				// 상한복구이벤트 대응 잡 목록 확인
+				// 하한일탈이벤트 대응 잡 목록 확인
+				// 하한복구이벤트 대응 잡 목록 확인
+		
+			return "/Config/EventJobForm_Limit";			
+		}
+	}//method
+	
+	
+	
+	
 }//class

@@ -29,12 +29,18 @@
 		      <li id="MakeReport"><a href="#">보고서 작성</a></li>
 		      <!-- 관리자 로그인 -->
 		      <c:if test="${sessionScope.TYPE eq 'M'}">
+		      	<li id="ConfigMenu"><a href="#" onclick="move('../Manager/ConfigMenu.hs' )">관리자 메뉴</a></li>
+		      	<!-- 
 		      	<li id="SensorSetting"><a href="#" onclick="move('../Manager/SensorSetting.hs' )">센서 설정</a></li>
+		      	 -->
 		      </c:if>
 		      <!-- 담당자 로그인 -->
 		      <c:if test="${sessionScope.TYPE eq 'A'}">
+		      	<li id="ConfigMenu"><a href="#" onclick="move('../Manager/ConfigMenu.hs' )">담당자 메뉴</a></li>
+		      	<!-- 
 		      	<li id="SensorSetting"><a href="#" onclick="move('../Manager/SensorSetting.hs' )">센서 설정</a></li>
 		      	<li id="UserList"><a href="../Admin/UserList.hs">사용자 조회</a></li>
+		      	 -->
 		      </c:if>		      
 		      
 		      

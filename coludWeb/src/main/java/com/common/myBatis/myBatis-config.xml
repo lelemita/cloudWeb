@@ -18,7 +18,8 @@
 		<typeAlias alias="eventData" 	type="com.hasom.data.EventData" />	
 		<typeAlias alias="userData" 	type="com.hasom.data.UserData" />	
 		<typeAlias alias="searchData" 	type="com.hasom.data.SearchData" />			
-		
+		<typeAlias alias="sensorInfoData" 	type="com.hasom.data.SensorInfoData" />		
+		<typeAlias alias="jobData" 	type="com.hasom.data.JobData" />		
 	</typeAliases>
 	
 	

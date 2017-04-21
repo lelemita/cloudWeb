@@ -36,7 +36,26 @@
 
 /* 잘못된 입력 */
 .inputError {
-	background-color: #ffe6e6;
-  border: 2px solid #c30000;
-  color : #c30000;
+	background-color: #ffe6e6 !important;
+  border: 2px solid #c30000 !important;
+  color : #c30000 !important;
+  font-weight: bold;
 }
+
+/* 선택된 tr */
+.choosed {
+	background-color: #D65076 !important;
+  border: 1px solid lightgray !important;
+  color : white !important;
+}
+
+/* 센서설정 : 입력 폼 */
+.formInTable {
+	border-style : hidden;
+	text-align: center;
+	width: 100px;
+}
+.changedValue {
+	background-color: #ffffcc;
+}
+

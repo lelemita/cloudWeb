@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="config">
+	
+	<!-- 그룹, 요소 → 센서 정보 조회하는 쿼리 -->
+	<select id = "SensorInfos" parameterType="hashmap" resultType="sensorInfoData">
+		SELECT 
+				gs.s_display, l.l_no,
+				l.l_high, 	l.l_highlow, 	l.l_low, 	l.l_lowhigh, 	l.l_delay, 	l.l_re_alarm, 	l.l_adjust
+			FROM	limit_table l , Group_sensor gs, Sensor_factor sf, Factor f
+			WHERE	l.gs_no = gs.gs_no
+			AND		gs.g_no = #{g_no}
+			AND		l.sf_no = sf.sf_no
+			AND		f.f_table_name = #{f_table_name}
+			AND		f.f_no = sf.f_no
+	</select>		
+
+	<!-- 센서 이름 변경 -->
+	<update id="saveChange_s_display" parameterType="hashmap">
+		UPDATE group_sensor
+			SET s_display = #{value}
+			WHERE gs_no = (SELECT l.gs_no FROM limit_Table l WHERE l_no=#{l_no})	
+	</update>
+	
+	<!-- 센서 설정 변경 -->
+	<update id="saveChange" parameterType="hashmap">
+		UPDATE limit_table 
+			SET ${field} = #{value}
+			WHERE l_no = #{l_no};
+	</update>
+	
+	<!-- 해당 그룹 + 표준 잡 목록 -->
+	<select id="getJobList" parameterType="_int" resultType="jobData">
+		SELECT j_no, g_no,	j_name,	j_text,	j_target,	j_class
+			FROM job
+			WHERE g_no = 0 OR g_no = #{g_no}
+			ORDER BY g_no DESC, j_name
+	</select>
+	
+	<!--해당 j_no 삭제  -->
+	<delete id="deleteJob" parameterType="_int">
+		DELETE FROM job
+			WHERE j_no = #{j_no}
+	</delete>
+	
+	<!-- 수정, 복제인 경우, 해당 잡의 내용을 찾아서 보냄 -->
+	<select id="getJobData" parameterType="_int" resultType="jobData">
+		SELECT j_no, g_no,	j_name,	j_text,	j_target,	j_class
+			FROM job
+			WHERE j_no = #{j_no}
+	</select>	
+	
+	<!-- 전송방법 종류 조회 -->
+	<select id="getJobTypeList" resultType="string">
+		SELECT DISTINCT j_class FROM job
+	</select>
+	
+	<!-- job 등록 -->
+	<insert id="insertJob" parameterType="jobData">
+		INSERT INTO job VALUES 
+			(null, #{g_no}, #{j_name}, #{j_text}, #{j_targetInput}, #{j_class})
+	</insert>
+	
+	<!-- 잡 수정 -->
+	<update id="updateJob" parameterType="jobData">
+			UPDATE job SET
+				j_name	=#{j_name	},
+				j_text	=#{j_text},
+				j_target	=#{j_targetInput},
+				j_class	=#{j_class}
+			WHERE j_no = #{j_no}
+	</update>
+
+	<!-- e_no , (g_no or l_no) → j_nos 구하기 -->
+	<select id="getJ_nos" parameterType="hashmap" resultType="string">
+		SELECT j_nos FROM event_job
+			WHERE	no = #{no}
+			AND		e_no = #{e_no}
+	</select>
+
+
+
+
+
+
+</mapper>	

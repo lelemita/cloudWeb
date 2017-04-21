@@ -1,6 +1,7 @@
 package com.hasom.service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.annotation.Resource;
 
@@ -8,6 +9,7 @@ import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 
 import com.hasom.dao.ConfigDAO;
+import com.hasom.data.JobData;
 import com.hasom.data.SearchData;
 import com.hasom.data.UserData;
 import com.hasom.util.PageUtil;
@@ -15,7 +17,16 @@ import com.hasom.util.StringUtil;
 
 @Service("configService")
 public class ConfigService {
-    Logger log = Logger.getLogger(this.getClass());
+    // 조회할 잡 리스트를 구분하기 위한 필드 (e_no)
+	public static final int DISCONTACT = -1;
+	public static final int HIGH		= -1001;
+	public static final int LOW			= -1002;
+	public static final int CONTACT 	= -DISCONTACT;
+	public static final int HIGHLOW		= -HIGH;
+	public static final int LOWHIGH		= -LOW;
+    
+    
+	Logger log = Logger.getLogger(this.getClass());
     @Resource(name="configDAO")
     private ConfigDAO dao;
     
@@ -207,7 +218,134 @@ public class ConfigService {
 				continue;
 			}
 		}//for
-	}	
+	}
+
+	// 그룹, 요소 → 센서 정보 조회
+	public ArrayList getSensorInfos(int g_no, String nowFactor) {
+		try {
+			HashMap paramap = new HashMap();
+			paramap.put("g_no", g_no);
+			paramap.put("f_table_name", nowFactor);
+			return dao.getSensorInfo(paramap);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}//method
+
+	// 설정 변경 사항 저장
+	public boolean saveChangeSettings(String[] changes) {
+	try{
+		//	필요 정보
+		for(String ch : changes) {			
+			// 각 변경사항 저장 7-l_highlow$29.5
+			String[] temp	= ch.split("\\$");
+			String[] target	= temp[0].split("-");
+			String str_l_no	= target[0];
+			int 	l_no = Integer.parseInt(str_l_no);
+			String	field	= target[1];
+			String	value	= temp[1];
+			HashMap paramap = new HashMap();
+			paramap.put("l_no" , l_no);
+			paramap.put("field" , field);
+		
+			// s_display 인 경우
+			if(field.equals("s_display")){
+				paramap.put("value", value);
+				dao.change_s_display(paramap);
+			}
+			// l_delay, l_re_alarm 인 경우
+			else if(field.equals("l_delay") || field.equals("l_re_alarm")){
+				paramap.put("value", Integer.parseInt(value));
+				dao.changeSettings(paramap);
+			}
+			// 그 외
+			else {
+				paramap.put("value", value);
+				dao.changeSettings(paramap);
+			}
+		}//for
+		return true;
+	}catch(Exception ex) {
+		ex.printStackTrace();
+		return false;
+	}
+	}//함수
+
+	//해당 그룹 + 표준 잡 정보 서비스
+	public ArrayList<JobData> getJobList(int g_no) {
+		try {
+			return dao.getJobList(g_no);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ArrayList();
+		}
+	}
+
+	//해당 j_no 삭제 서비스
+	public boolean deleteJob(int j_no) {
+		boolean isSuccess = true;
+		try {
+			dao.deleteJob(j_no);
+		}catch (Exception ex){
+			isSuccess = false;
+			ex.printStackTrace();
+		}
+		return isSuccess;
+	}
+
+	// 수정, 복제인 경우, 해당 잡의 내용을 찾아서 보냄
+	public JobData getJobData(int j_no) {
+		try {
+			return dao.getJobData(j_no);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new JobData();
+		}
+	}
+
+	// 전송방법 종류 조회
+	public ArrayList<String> getJobTypeList() {
+		try {
+			return dao.getJobTypeList();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ArrayList<String>();
+		}
+	}
+
+	// 잡 등록, 수정 서비스
+	public boolean adjustJob(String workType , JobData data) {
+		try{
+			if(workType.equals("수정")){
+				dao.updateJob(data);				
+			}else{
+				dao.insertJob(data);
+			}
+			return true;
+		}catch (Exception ex) {
+			ex.printStackTrace();
+			return false;
+		}
+	}
+
+	// 해당 그룹의 통신 장애, 복구에 대한 대응 잡 내용 조회
+	public ArrayList<JobData> getEventJobList(int e_no, int g_no) {
+		ArrayList<JobData> jobList = new ArrayList<JobData>();
+		try {
+			HashMap<String, Integer> paramap = new HashMap<String, Integer>();
+			paramap.put("e_no", e_no);
+			paramap.put("no", g_no);	
+			String j_nos = dao.getJ_nos(paramap);
+			String[] j_noArray = j_nos.split(",");
+			for(String j_no : j_noArray){
+				jobList.add( dao.getJobData(Integer.parseInt(j_no.trim())) );
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return jobList;
+	}
 	
 	
 	
