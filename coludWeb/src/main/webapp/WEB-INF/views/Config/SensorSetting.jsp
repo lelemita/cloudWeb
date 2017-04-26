@@ -48,7 +48,7 @@ $(document).ready(function(){
 	<input type="hidden" value="${ID}" id="myid">
 	<input type="hidden" value="${DATA.popMsg}" id="pop">	
 	
-	<div class="container" style="width : 95%; min-width: 1000px; max-width: 1500px;">
+	<div class="container" style="width:1200px;">
 		<!-- Nav tabs -->
 		<ul class="nav nav-tabs nav-pills nav-justified">
 			<!-- 해당 사용자가 담당하는 그룹 선택 탭  -->
