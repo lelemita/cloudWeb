@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <!-- jQuery -->
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js" type="text/javascript"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <!-- Bootstrap Core JavaScript -->
 <script src="../resources/bootstrap/sb-admin-2/vendor/bootstrap/js/bootstrap.min.js"></script>
 <!-- Bootstrap Core CSS -->
@@ -19,39 +19,9 @@
 <link href="../resources/bootstrap/sb-admin-2/dist/css/sb-admin-2.css" rel="stylesheet">
 <!--sb-admin-2 :  Custom Fonts -->
 <link href="../resources/bootstrap/sb-admin-2/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+<!-- 직접 작성 -->
+<link href="../resources/css/common.css?ver=0.1" rel="stylesheet" type="text/css">
 
-<style>
-	.floating-box {
-	    display: inline-block;
-	    width: 150px;
-	    margin: 5px;
-	}
-	.panel-body {
-	  padding: 3px;
-	}
-	.panel-heading {
-	  padding: 3px;
-	}
-	.panel-footer {
-	  padding: 3px;
-	}
-	.well {
-	  min-height: 20px;
-	  padding: 19px;
-	  margin-bottom: 20px;
-	  background-color: #ffffff;
-	  border: 1px solid #c3c3c3;
-	  border-radius: 3px;
-	  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .05);
-	          box-shadow: inset 0 1px 1px rgba(0, 0, 0, .05);
-	}
-	.container {
-	  padding-right: 15px;
-	  padding-left: 15px;
-	  margin : auto;
-	  width : 95%;
-	}
-</style>
 <script>
 	$(document).ready(function(){
 		//document.write( '${DATA.userDataList[1].u_name}' );	

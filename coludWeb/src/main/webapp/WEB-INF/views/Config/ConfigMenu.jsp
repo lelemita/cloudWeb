@@ -9,27 +9,24 @@
 	<c:if test="${sessionScope.TYPE eq 'A'}">담당자 메뉴</c:if>
 </title>
 <!-- jQuery -->
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js" type="text/javascript"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <!-- Bootstrap Core JavaScript -->
 <script src="../resources/bootstrap/sb-admin-2/vendor/bootstrap/js/bootstrap.min.js"></script>
 <!-- Bootstrap Core CSS -->
 <link href="../resources/bootstrap/sb-admin-2/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 <!-- 직접 작성 -->
 <script src="../resources/js/config/sensorSetting.js?ver=1"></script>
+<link href="../resources/css/common.css?ver=0.1" rel="stylesheet" type="text/css">
 
 </head>
 <body>
 	<header>
 		<%@ include file= "../Common/Header.jsp" %>
 	</header>
-	
-	<!-- 좌측 세로 공간 -->
-	<div class="col-sm-2 sidenav" >
-	</div>
-	<div class="col-sm-1"></div>
+	<section class="container" style="width : screen.width*60%; min-width:screen.width; max-width: 800px;">	
 		
 	<!-- 중앙공간 -->
-	<article class="col-sm-6 text-left">
+	<article>
 		<div class="col-sm-12" style="height: 100px;" ><!-- 여백 --></div>
 		<div class="col-sm-6">
 			<button type="button" class="btn btn-success btn-block" style="height: 200px;" onclick="location.href='../Manager/SensorSetting.hs'"><h2>센서<br>설정</h2></button>
@@ -48,6 +45,6 @@
 			<button type="button" class="btn btn-info btn-block" style="height: 200px;" onclick="location.href='../Manager/JobSetting.hs'"><h2>대응 Job<br>목록</h2></button>
 		</div>
 	</article>
-
+</section>
 </body>
 </html>

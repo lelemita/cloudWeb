@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <!-- jQuery -->
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js" type="text/javascript"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <!-- Bootstrap Core JavaScript -->
 <script src="../resources/bootstrap/sb-admin-2/vendor/bootstrap/js/bootstrap.min.js"></script>
 <!-- Bootstrap Core CSS -->
@@ -20,8 +20,8 @@
 <!--sb-admin-2 :  Custom Fonts -->
 <link href="../resources/bootstrap/sb-admin-2/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
 <!-- 직접 작성 -->
-<link href="../resources/css/common.css?ver=11" rel="stylesheet" type="text/css">
-<script src="../resources/js/config/sensorSetting.js?ver=8"></script>
+<link href="../resources/css/common.css?ver=0.1" rel="stylesheet" type="text/css">
+<script src="../resources/js/config/sensorSetting.js?ver=0.1"></script>
 
 <script>
 $(document).ready(function(){
@@ -48,7 +48,7 @@ $(document).ready(function(){
 	<input type="hidden" value="${ID}" id="myid">
 	<input type="hidden" value="${DATA.popMsg}" id="pop">	
 	
-	<div class="container" >
+	<div class="container" style="width : 95%; min-width: 1000px; max-width: 1500px;">
 		<!-- Nav tabs -->
 		<ul class="nav nav-tabs nav-pills nav-justified">
 			<!-- 해당 사용자가 담당하는 그룹 선택 탭  -->

@@ -6,7 +6,7 @@
 <meta charset=UTF-8>
 <title>임계값 일탈 이벤트 대응방법 설정</title>
 <!-- jQuery -->
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js" type="text/javascript"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <!-- Bootstrap Core JavaScript -->
 <script src="../resources/bootstrap/sb-admin-2/vendor/bootstrap/js/bootstrap.min.js"></script>
 <!-- Bootstrap Core CSS -->
@@ -19,7 +19,7 @@
 <link href="../resources/bootstrap/sb-admin-2/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
 
 <!-- 직접 작성 -->
-<link href="../resources/css/common.css?ver=10" rel="stylesheet" type="text/css">
+<link href="../resources/css/common.css?ver=0.1" rel="stylesheet" type="text/css">
 
 <script>
 $(document).ready(function(){

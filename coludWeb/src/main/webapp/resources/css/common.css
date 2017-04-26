@@ -31,7 +31,9 @@
   padding-right: 15px;
   padding-left: 15px;
   margin : auto;
-  width : 95%;
+  width : screen.width*80%; 
+  min-width: screen.width; 
+  max-width: 1200px;
 }
 
 /* 잘못된 입력 */

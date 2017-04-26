@@ -23,38 +23,9 @@
 <link href="../resources/bootstrap/sb-admin-2/dist/css/sb-admin-2.css" rel="stylesheet">
 <!-- Custom Fonts -->
 <link href="../resources/bootstrap/sb-admin-2/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
-<style>
-	.floating-box {
-	    display: inline-block;
-	    width: 150px;
-	    margin: 5px;
-	}
-	.panel-body {
-	  padding: 3px;
-	}
-	.panel-heading {
-	  padding: 3px;
-	}
-	.panel-footer {
-	  padding: 3px;
-	}
-	.well {
-	  min-height: 20px;
-	  padding: 19px;
-	  margin-bottom: 20px;
-	  background-color: #ffffff;
-	  border: 1px solid #c3c3c3;
-	  border-radius: 3px;
-	  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .05);
-	          box-shadow: inset 0 1px 1px rgba(0, 0, 0, .05);
-	}
-	.container {
-	  padding-right: 15px;
-	  padding-left: 15px;
-	  margin : auto;
-	  width : 95%;
-	}
-</style>
+<!-- 직접 작성 -->
+<link href="../resources/css/common.css?ver=0.1" rel="stylesheet" type="text/css">
+
 <script>
 	$(document).ready(function(){
 		// Header의 현재 메뉴 표시
@@ -126,7 +97,7 @@
 		</ul>
 		
 		<!-- Tab panes -->
-		<div id="sensorArea" class="tab-content well">
+		<div id="sensorArea" class="tab-content well text-center">
 			<!-- Ajax로 센서 데이터 들어올 영역 -->
 		</div> <!-- /.tab-content well-->
 	</div> <!-- /.container -->
