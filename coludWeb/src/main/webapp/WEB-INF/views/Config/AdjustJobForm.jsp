@@ -165,7 +165,7 @@ function checkPassword(pw) {
 			<div class="form-group col-sm-12 col-sm-offset-1">
 				<div class="col-sm-2" style="font-weight: bold;">내용</div>
 				<div class="col-sm-8">
-					<textarea id="j_text" name="j_text" class="form-control" rows="5" placeholder="발송할 문구를 입럭하세요.">${DATA.j_text}</textarea>
+					<textarea id="j_text" name="j_text" class="form-control" rows="5" placeholder="발송할 문구를 입럭하세요.">${DATA.j_textLF}</textarea>
 				</div>
 			</div>				
 			
@@ -179,13 +179,10 @@ function checkPassword(pw) {
 					#GROUP &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : 그룹 이름<br>
 					#LOCATION	: 센서위치(이름)<br>
 					#FACTOR &nbsp;&nbsp;&nbsp; : 측정요소<br>
-					#VALUE &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : 현재 측정 값<br>
 				</div>
 				<div class="col-sm-4" style="line-height: 1.6em;">
-					#COUNT		: 재알림 회수<br>
-					\n &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : 문자보낼 때 줄바꿈<br>
-					&lt;br&gt; &nbsp;	: 메일보낼 때 줄바꿈<br>
-
+					#VALUE &nbsp;&nbsp;&nbsp;&nbsp; : 현재 측정 값<br>
+					#COUNT &nbsp;&nbsp; : 재알림 회수<br>
 				</div>				
 			</div>
 		</form>

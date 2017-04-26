@@ -1,6 +1,8 @@
 package com.hasom.controller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -501,16 +503,14 @@ public class ConfigController {
 		String u_id = (String) session.getAttribute("ID");
 		//서비스
 		//1) 선택 화면에 필요한 내용
-		int g_no = 0;
-		ArrayList g_names	= null;
-		ArrayList f_names	= null;
+		int g_no = -1;
 		try {
 			//	(1) 그룹 목록 ==> 그룹 탭
 			// 그 아이디[u_id]가 관리하는 그룹 번호(g_no[]) 목록 확인 (Group_user)
 			ArrayList g_nos = mService.getG_nos(u_id);
 			// (해당 사용자의) 모든 g_no[]에 대한 g_name[] 확인 ==> 탭 이름 결정
 			//	(나중에) 이름 길이에 신경써야 함 (ex. 5글자 이상 ... 처리)
-			g_names = mService.getG_names(u_id);
+			ArrayList g_names = mService.getG_names(u_id);
 			// 그 그룹 갯수[g_count] 저장
 			int g_count = g_names.size();
 			// g_count < 0 이면, 담당 그룹이 없다는 페이지 리턴
@@ -524,7 +524,18 @@ public class ConfigController {
 			// (2) g_no = g_no[nowGroup] 에 대해서 다음 실행
 			g_no = (Integer) g_nos.get(nowGroup);
 			// (3) 해당 그룹의 모든 측정요소 목록 (중복제외)
-			f_names = mService.getF_names(g_no);
+			ArrayList f_names = mService.getF_names(g_no);
+			
+			// 전송방법 종류 조회
+			ArrayList<String> typeList = service.getJobTypeList();
+			
+			//모델 보내기1
+			model.addAttribute("NOWGROUP", nowGroup);	
+			model.addAttribute("NOWFACTOR", nowFactor);
+			model.addAttribute("G_NAMES", g_names);			
+			model.addAttribute("F_NAMES", f_names);		
+			model.addAttribute("G_NO", g_no);
+			model.addAttribute("JOBTYPES" , typeList);
 		}
 		catch (Exception ex) {
 			log.info(">> 그룹 정보조회 실패");	
@@ -533,35 +544,136 @@ public class ConfigController {
 			// ★★★★ (나중에) 에러 안내 페이지 만들자
 		}		
 
-		//모델 보내기1
-		model.addAttribute("NOWGROUP", nowGroup);	
-		model.addAttribute("NOWFACTOR", nowFactor);
-		model.addAttribute("G_NAMES", g_names);			
-		model.addAttribute("F_NAMES", f_names);		
-		model.addAttribute("G_NO", g_no);
 		
 		//통신 장애에 대한 설정인 경우
 		if(nowFactor.equals("CON")){
 			// 해당 그룹의 통신 장애, 복구에 대한 대응 잡 내용 조회
-			ArrayList<JobData> disList = service.getEventJobList(ConfigService.DISCONTACT , g_no);
-			ArrayList<JobData> conList = service.getEventJobList(ConfigService.CONTACT , g_no);
-			model.addAttribute("DISCON" , disList);
-			model.addAttribute("CONACT", conList);
-			return "/Config/EventJobForm_Contact";
+			ArrayList<ArrayList<JobData>> listlist = new ArrayList<ArrayList<JobData>>();
+			listlist.add(service.getEventJobList(ConfigService.DISCONTACT , g_no));
+			listlist.add(service.getEventJobList(ConfigService.CONTACT , g_no));
+			model.addAttribute("LISTLIST",listlist);
+	
+			return "/Config/EventJobList_Contact";
 		}
 		//요소에 대한 설정인 경우
 		else {
-			// 해당그룹, 요소의 모든 l_no 목록조회
-			// 각 l_no 마다 다음 반복
-				//	(나중에) 센서별로 발생 가능한 이벤트를 DB에 저장하자★★★★★
-				// 상한일탈이벤트 대응 잡 목록 확인
-				// 상한복구이벤트 대응 잡 목록 확인
-				// 하한일탈이벤트 대응 잡 목록 확인
-				// 하한복구이벤트 대응 잡 목록 확인
-		
-			return "/Config/EventJobForm_Limit";			
+			ArrayList mapList = service.getEventJobList(g_no, nowFactor);
+			model.addAttribute("MAPLIST", mapList);
+			return "/Config/EventJobList_Limit";			
 		}
 	}//method
+	
+	
+	// (통신) 이벤트 잡 수정 폼 요청 (새창)
+	@RequestMapping("/Manager/EventJobAdjustForm.hs")
+	public String EventJobAdjustForm( Model model, JobData data) {
+		
+		//(수정인 경우) 필요한 정보 서비스
+		if(data.getJ_no()>0){
+			data = service.EventJobSetting(data);			
+		}
+		// 전송방법 종류 조회
+		ArrayList<String> typeList = service.getJobTypeList();
+		// 해당 그룹 + 표준 잡 정보 목록 서비스
+		ArrayList<JobData> jobList = service.getJobList(data.getG_no());
+
+		model.addAttribute("JOBLIST", jobList);		
+		model.addAttribute("JOBTYPES" , typeList);
+		model.addAttribute("DATA" , data);
+		return "/Config/EventJobAdjustForm";
+	}
+	
+	// 특정 이벤트에서 n번째 잡 추가/변경/삭제하기 작업처리 요청
+	@RequestMapping("/Manager/EventJobAdjustProc.hs")
+	public String EventJobAdjustProc(Model model, JobData data){
+		String msg = "";
+		
+		// event-job 목록에서 해당 order의 잡 변경/삭제
+		boolean isSuccess = service.adjustEventJob(data);
+		msg = data.getWorkType() + (isSuccess? "완료" : "실패");
+		
+		model.addAttribute("MSG", msg);
+		return "/Config/ClosePage";
+	}
+	
+	/*
+	 * 임계값 이벤트 잡 변경에 대한 수정 폼 요청
+	 */
+	@RequestMapping("/Manager/LimitEventJobForm.hs")
+	public String LimitEventJobForm(Model model,
+			@RequestParam(value="g_no",  required=true)		int g_no,
+			@RequestParam(value="g_name",  required=true)	String g_name,
+			@RequestParam(value="l_nos",  required=true)	String l_nos,
+			@RequestParam(value="s_displays",  required=true)	String s_displays,
+			@RequestParam(value="nowFactor", required=true)	String nowFactor		){
+		// 결과 메시지
+		String msg = "";
+		// l_nos 분리
+		String[] strL_no = l_nos.split(",");
+		ArrayList<Integer> l_no = StringUtil.makeList(l_nos, ",", StringUtil.forInteger);
+		
+		// 첫번 째 l_nos의 잡 조회
+		HashMap<String, ArrayList<JobData>> joblistMap = service.getJobListMap(l_no.get(0));
+
+		// 표준 + 해당 그룹의 모든 잡 조회
+		ArrayList<JobData> jobList = service.getJobList(g_no);
+		
+		// 전달
+		model.addAttribute("MSG", msg);
+		model.addAttribute("G_NAME", g_name);
+		model.addAttribute("NOWFACTOR", nowFactor);
+		model.addAttribute("L_NOS", l_nos);
+		model.addAttribute("S_DISPLAYS", s_displays);
+		model.addAttribute("NOWJOBS", joblistMap);
+		model.addAttribute("JOBLIST", jobList);		
+		return "/Config/LimitEventJobForm";
+	}
+	
+	/*
+	 * 임계값 이벤트 잡 변경에 대한 수정 작업 요청
+	 */
+	@RequestMapping("/Manager/LimitEventJobProc.hs")
+	public String LimitEventJobProc(Model model,
+			@RequestParam(value="l_nos",		required=true)	String l_nos,
+			@RequestParam(value="highjob",		required=true)	int[] highjob,
+			@RequestParam(value="highlowjob",	required=true)	int[] highlowjob,
+			@RequestParam(value="lowhighjob",	required=true)	int[] lowhighjob,
+			@RequestParam(value="lowjob",		required=true)	int[] lowjob		){
+		//파라베터 받기
+		//	변경할 l_no 목록 받기
+		ArrayList<Integer> l_noList = StringUtil.makeList(l_nos, ",", StringUtil.forInteger);
+		//	이벤트별 잡 목록 처리
+		int[][] intTemp = {highjob, highlowjob, lowhighjob, lowjob};
+		String[] strJ_nos = new String[intTemp.length];
+		for(int i=0;i<intTemp.length;i++){
+			strJ_nos[i] = "";
+			for(int j_no : intTemp[i]) {
+				if(j_no >= 0) {
+					strJ_nos[i] += j_no + ",";
+				}//if 사용안함(-1)인지 검사
+			}//for 각 목록별
+		}//for 이벤트 타입별
+		
+		// 변경 작업 서비스
+		boolean isSuccess = service.adjustEventJob_Limit(l_noList, strJ_nos);
+		String msg = "변경작업 " + (isSuccess? "완료" : "실패");
+		
+		//보내기
+		model.addAttribute("MSG", msg);
+		return "/Config/ClosePage";
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	

@@ -81,9 +81,44 @@
 			AND		e_no = #{e_no}
 	</select>
 
+	<!-- 현재 선택된 전송방법의 잡 목록 조회 -->
+	<select id="getJobList_class" parameterType="hashmap" resultType="hashmap">
+		SELECT DISTINCT j_class FROM job
+	</select>
 
+	<!-- j_nos 업데이트 하기 -->
+	<update id="updateEventJob" parameterType="jobData">
+		UPDATE event_job	
+			SET  	j_nos	= #{j_nos}	
+			WHERE	no = #{no}
+			AND		e_no = #{e_no}
+	</update>
 
-
-
-
+	<!-- 해당그룹, 요소의 모든 l_no 목록조회 -->
+	<select id="getL_noList" parameterType="hashmap" resultType="_int">
+		SELECT l.l_no 
+			FROM limit_table l, group_sensor gs, Sensor_factor sf, Factor f
+			WHERE	gs.g_no = #{g_no}
+			AND		f.f_table_name = #{nowFactor}
+			AND		l.gs_no = gs.gs_no
+			AND		l.sf_no = sf.sf_no
+			AND		sf.s_no = gs.s_no
+			AND		sf.f_no = f.f_no	
+	</select>
+	
+	<!-- event_job 열 생성 -->
+	<insert id="makeRow_event_job" parameterType="hashmap">
+		INSERT INTO event_job VALUES
+			(#{no} , #{e_no} , '')
+	</insert>
+	
+	<!-- l_no → s_display -->
+	<select id="getS_display" parameterType="_int" resultType="String">
+		SELECT s_display FROM group_sensor
+			WHERE gs_no = (SELECT l.gs_no FROM limit_Table l WHERE l_no=#{l_no})	
+	</select>
+	
+	
+	
+	
 </mapper>	

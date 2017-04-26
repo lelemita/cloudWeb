@@ -1,7 +1,8 @@
 package com.hasom.util;
 
-import java.util.Date;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 
 /*
  * 문자에 관련된 공통 기능을 만들어 사용할 클래스
@@ -31,6 +32,16 @@ public class StringUtil {
 			return data;
 		}
 	}
+	static public String forLine(String data, String target) {
+		if (isNull(data)) {
+			return null;
+		}
+		else {
+			data = data.replaceAll("\r\n", target);
+			return data;
+		}
+	}	
+	
 	
 	/*
 	 *	3) 한 문자열이 특정 문자열 을 포함하고 있는지 검사하는 메서드 
@@ -92,5 +103,20 @@ public class StringUtil {
 	}//isNaturalNum()	
 	
 	
+	static public final int forInteger = 1000;
+	static public final int forString = 1002;
+	// 특정 구분자 문자열 원하는 양식 ArrayList로 구분
+	static public ArrayList makeList(String data, String token, int dataType) {
+		ArrayList result = new ArrayList();
+		String[] array = data.split(token);
+		for(String temp : array) {
+			if(dataType == forInteger){
+				result.add( (Integer.parseInt(temp.trim())) );
+			}else{
+				result.add(temp.trim());
+			}
+		}
+		return result;
+	}
 	
 }//클래스

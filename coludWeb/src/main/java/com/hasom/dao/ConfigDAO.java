@@ -135,4 +135,29 @@ public class ConfigDAO  extends AbstractDAO{
 	public String getJ_nos(HashMap paramap) throws Exception {
 		return (String)selectOne("config.getJ_nos", paramap);
 	}
+
+	// j_nos 업데이트 하기
+	public void updateEventJob(int no, int e_no, String j_nos) {
+		HashMap para = new HashMap();
+		para.put("no", no);
+		para.put("e_no" ,e_no);
+		para.put("j_nos", j_nos);
+		update("config.updateEventJob" , para);
+	}
+	//해당그룹, 요소의 모든 l_no 목록조회
+	public ArrayList<Integer> getL_noList(int g_no, String nowFactor) throws Exception {
+		HashMap para = new HashMap();
+		para.put("g_no", g_no);
+		para.put("nowFactor", nowFactor);
+		return (ArrayList<Integer>) selectList("config.getL_noList",para);
+	}
+	// event_job 테이블에 열생성
+	public void makeRow_event_job(HashMap<String, Integer> paramap) {
+		insert("config.makeRow_event_job" ,paramap);
+	}
+	// l_no → s_display
+	public String getS_display(int l_no) throws Exception {
+		return (String) selectOne("config.getS_display" , l_no);
+	}
+	
 }//class

@@ -2,6 +2,7 @@ package com.hasom.service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -317,6 +318,9 @@ public class ConfigService {
 	// 잡 등록, 수정 서비스
 	public boolean adjustJob(String workType , JobData data) {
 		try{
+			// textarea에서 입력된 줄바꿈 수정
+			data.setJ_text(StringUtil.toBR(data.getJ_text()));
+		
 			if(workType.equals("수정")){
 				dao.updateJob(data);				
 			}else{
@@ -330,22 +334,156 @@ public class ConfigService {
 	}
 
 	// 해당 그룹의 통신 장애, 복구에 대한 대응 잡 내용 조회
-	public ArrayList<JobData> getEventJobList(int e_no, int g_no) {
+	public ArrayList<JobData> getEventJobList(int e_no, int no) {
 		ArrayList<JobData> jobList = new ArrayList<JobData>();
 		try {
 			HashMap<String, Integer> paramap = new HashMap<String, Integer>();
 			paramap.put("e_no", e_no);
-			paramap.put("no", g_no);	
+			paramap.put("no", no);	
 			String j_nos = dao.getJ_nos(paramap);
+			if(j_nos == null) {
+				// 테이블에 해당 정보가 없는 경우
+				//1.열 생성
+				dao.makeRow_event_job(paramap);
+				//2.j_nos = ""; 반환
+				j_nos = "";
+			}
+			
 			String[] j_noArray = j_nos.split(",");
-			for(String j_no : j_noArray){
-				jobList.add( dao.getJobData(Integer.parseInt(j_no.trim())) );
+			for(String strj_no : j_noArray){
+				JobData data = new JobData();
+				try{
+					int j_no = Integer.parseInt(strj_no.trim());
+					data = dao.getJobData(j_no);
+				} catch (Exception e) { /* 숫자 양식이 아님 : 공백 or , */ }
+				jobList.add( data );
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return jobList;
 	}
+
+	// (통신) 이벤트 잡 수정 폼 요청 (새창)
+	public JobData EventJobSetting(JobData data) {
+		try {
+			JobData result = dao.getJobData(data.getJ_no());
+			data.setJ_name(result.getJ_name());
+			data.setJ_text(result.getJ_text());
+			data.setJ_target(result.getJ_target());
+			data.setJ_class(result.getJ_class());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return data;
+	}
+
+	// event-job 목록에서 해당 order의 잡 제거 
+	public boolean adjustEventJob(JobData data) {
+		boolean isSuccess = true;
+		try {
+			// 현재 j_nos 구하기
+			HashMap<String,Integer> paramap = new HashMap<String,Integer>();
+			paramap.put("no", data.getG_no());
+			paramap.put("e_no", data.getE_no());
+			String j_nos = dao.getJ_nos(paramap);
+			
+			// j_nos 추가/수정하기
+			String[] temp = j_nos.split(",");
+			StringBuffer buff = new StringBuffer();
+			//	1) 추가인 경우
+			if(temp.length<=data.getOrder()){
+				buff.append(j_nos + data.getNewj_no() + ",");
+			}
+			//	2) 수정인 경우
+			else {
+				for(int i=0;i<temp.length;i++){
+					if(i!=data.getOrder()){
+						buff.append(temp[i] + ",");
+					}else if(data.getWorkType().equals("변경")){
+						buff.append(data.getNewj_no() + ",");
+					}
+				}//for (기존j_nos)
+			}
+			
+			// j_nos 업데이트 하기
+			data.setJ_nos(buff.toString());
+			dao.updateEventJob(data.getG_no() , data.getE_no() , data.getJ_nos());
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			isSuccess = false;
+		}
+		return isSuccess;
+	}
+
+	// 일탈 이벤트 잡 목록들 조회
+	public ArrayList getEventJobList(int g_no, String nowFactor) {
+		ArrayList result = new ArrayList();
+		try {
+			// 해당그룹, 요소의 모든 l_no 목록조회
+			ArrayList<Integer> l_nos = dao.getL_noList(g_no, nowFactor);
+			// 각 l_no 마다 다음 반복
+			for(int l_no : l_nos) {
+				HashMap<String,Object> temp = new HashMap<String,Object>();
+				// l_no
+				temp.put("l_no", l_no);
+				// l_no → s_display
+				String s_display = dao.getS_display(l_no);
+				temp.put("s_display", s_display);
+				
+				HashMap<String, ArrayList<JobData>> joblists = new HashMap<String, ArrayList<JobData>>();
+				//	(나중에) 센서별로 발생 가능한 이벤트를 DB에 저장하자★★★★★
+				// 상한일탈이벤트 대응 잡 목록 확인
+				joblists.put("high" , getEventJobList(this.HIGH , l_no));
+				// 상한복구이벤트 대응 잡 목록 확인
+				joblists.put("highlow" , getEventJobList(this.HIGHLOW , l_no));
+				// 하한복구이벤트 대응 잡 목록 확인
+				joblists.put("lowhigh" , getEventJobList(this.LOWHIGH , l_no));
+				// 하한일탈이벤트 대응 잡 목록 확인
+				joblists.put("low" , getEventJobList(this.LOW , l_no));
+				temp.put("event_jobs" , joblists);
+				
+				result.add(temp);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+	
+	// 첫번 째 l_nos의 잡 조회
+	public HashMap<String, ArrayList<JobData>> getJobListMap(int l_no) {
+		HashMap<String, ArrayList<JobData>> joblists = new HashMap<String, ArrayList<JobData>>();
+		//	(나중에) 센서별로 발생 가능한 이벤트를 DB에 저장하자★★★★★
+		// 상한일탈이벤트 대응 잡 목록 확인
+		joblists.put("high" , getEventJobList(this.HIGH , l_no));
+		// 상한복구이벤트 대응 잡 목록 확인
+		joblists.put("highlow" , getEventJobList(this.HIGHLOW , l_no));
+		// 하한복구이벤트 대응 잡 목록 확인
+		joblists.put("lowhigh" , getEventJobList(this.LOWHIGH , l_no));
+		// 하한일탈이벤트 대응 잡 목록 확인
+		joblists.put("low" , getEventJobList(this.LOW , l_no));
+		return joblists;
+	}
+
+	// 일탈 이벤트 Job 변경
+	public boolean adjustEventJob_Limit(ArrayList<Integer> l_nos, String[] strJ_nos) {
+		try{
+			for(int l_no : l_nos){
+				dao.updateEventJob(l_no, this.HIGH , strJ_nos[0]);
+				dao.updateEventJob(l_no, this.HIGHLOW , strJ_nos[1]);
+				dao.updateEventJob(l_no, this.LOWHIGH , strJ_nos[2]);
+				dao.updateEventJob(l_no, this.LOW , strJ_nos[3]);
+			}
+			return true;
+		}catch (Exception ex) {
+			ex.printStackTrace();
+			return false;
+		}
+	}
+
+
 	
 	
 	
