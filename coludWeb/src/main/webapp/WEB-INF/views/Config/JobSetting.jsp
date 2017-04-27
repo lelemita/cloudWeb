@@ -146,7 +146,7 @@ $(document).ready(function(){
 			if(trs[i]==this){
 				$(this).toggleClass("choosed");				
 			}else {
-				$("#"+trs[i].id).removeClass("choosed");				
+				$(trs[i]).removeClass("choosed");				
 			}
 		}//for
 	});
