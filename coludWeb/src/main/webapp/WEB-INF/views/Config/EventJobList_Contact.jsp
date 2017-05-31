@@ -44,6 +44,7 @@ function adjustJob(type, order, j_no){
 	$("#sfrm").attr("target","_blank"); 
 	$("#sfrm").attr("action" , '../Manager/EventJobAdjustForm.hs');		
 	$("#sfrm").submit();
+	$("#sfrm").attr("target","_self"); 
 }
 
 

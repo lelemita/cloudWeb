@@ -14,7 +14,7 @@
 					<fmt:parseNumber var="gapTime" value="${(now.time - data.date.time) / (1000) }" integerOnly="true" />
 		
 					<c:choose>						
-						<c:when test="${G_M_PERIOD * 2 lt gapTime}" >
+						<c:when test="${G_M_OFF lt gapTime}" >
 							<!-- 통신 장애 -->
 							<div class="panel panel-default">
 						</c:when>

@@ -4,7 +4,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Insert title here</title>
+<title>하솜 정보기술</title>
 </head>
 <body>
 <h1>인덱스 파일<br></h1>

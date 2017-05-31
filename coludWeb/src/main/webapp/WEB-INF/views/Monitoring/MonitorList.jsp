@@ -48,7 +48,7 @@
 			url		: "../Monitoring/UpdateData.hs",
 			type	: "POST" ,   // GET이면, IE11에서 400에러 발생
 			//data	: "nowGroup=${NOWGROUP}&temp=" + new Date() ,
-			data : {'nowGroup':${NOWGROUP},'temp':new Date()} , //POST는 Object로 전달가능
+			data : {'g_no':${G_NO},'g_m_off':${G_M_OFF},'temp':new Date()} , //POST는 Object로 전달가능
 			dataType: "html" ,
 			success	: function(data){
 				$("#sensorArea").html(data);

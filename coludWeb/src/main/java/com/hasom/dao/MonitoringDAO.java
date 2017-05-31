@@ -28,6 +28,9 @@ public class MonitoringDAO extends AbstractDAO{
 	public int getG_m_period(int g_no)  throws Exception{
 		return (Integer) selectOne("monitoring.getG_m_period" , g_no);
 	}
+	public int getG_m_off(int g_no)  throws Exception{
+		return (Integer) selectOne("monitoring.getG_m_off" , g_no);
+	}
 
 	// 해당 그룹(g_no)에 설치된 센서(gs_no[]) 목록 확인 (Group_sensor)
 	public ArrayList getGs_nos(int g_no) throws Exception {

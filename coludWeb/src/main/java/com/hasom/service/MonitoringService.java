@@ -31,6 +31,9 @@ public class MonitoringService {
 	public int getG_m_period(int g_no)  throws Exception{
 		return dao.getG_m_period(g_no);
 	}
+	public int getG_m_off(int g_no)  throws Exception{
+		return dao.getG_m_off(g_no);
+	}
 	// g_no ==> g_cl_period  확인
 	public int getG_cl_period(int g_no)  throws Exception{
 		return dao.getG_cl_period(g_no);

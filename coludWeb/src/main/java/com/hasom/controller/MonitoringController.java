@@ -92,7 +92,9 @@ public class MonitoringController {
 	 * 모니터링 화면 업데이트 Ajax 요청
 	 */
 	@RequestMapping("/Monitoring/UpdateData.hs")	
-	public String UpdateData(@RequestParam(value="nowGroup", required=true) String strG_no, HttpSession session, HttpServletRequest req, Model model) {
+	public String UpdateData(	@RequestParam(value="g_no", required=true) String strG_no,
+								@RequestParam(value="g_m_off", required=true) int g_m_off,
+								HttpSession session, HttpServletRequest req, Model model) {
 		int g_no = Integer.parseInt(strG_no);
 		ArrayList list =  new ArrayList();
 		try {
@@ -100,6 +102,7 @@ public class MonitoringController {
 			list = service.getData(g_no);
 			// ArrayList를 모델에 전달 ●
 			model.addAttribute("LIST", list);
+			model.addAttribute("G_M_OFF", g_m_off);
 		}
 		catch (Exception ex) {
 			log.info(">> 측정 정보 조회 실패");
@@ -122,6 +125,7 @@ public class MonitoringController {
 		// ( 이하 과정은 각각 서비스에서)
 		int g_no = 0;
 		int g_m_period = 0;
+		int g_m_off = 300;
 		ArrayList g_names = null;
 		try {
 			// 그 아이디[u_id]가 관리하는 그룹 번호(g_no[]) 목록 확인 (Group_user)
@@ -144,11 +148,14 @@ public class MonitoringController {
 			g_no = (Integer) g_nos.get(nowGroup);
 			// g_no ==> g_m_period  확인 ==> 모델에 전달 ●  ==> 통신 지연 확인에 사용
 			g_m_period = service.getG_m_period(g_no);
-
+			g_m_off = service.getG_m_off(g_no);
+			
 			// 모델에 전달 ●			
 			model.addAttribute("G_NAMES", g_names);			
-			model.addAttribute("NOWGROUP", nowGroup);				
+			model.addAttribute("NOWGROUP", nowGroup);	
+			model.addAttribute("G_NO", g_no);
 			model.addAttribute("G_M_PERIOD", g_m_period);
+			model.addAttribute("G_M_OFF", g_m_off);
 		}
 		catch (Exception ex) {
 			log.info(">> 그룹 정보조회 실패");	

@@ -34,10 +34,10 @@ public class ServletUtil {
 			year = cal.get(Calendar.YEAR);
 			month = cal.get(Calendar.MONTH) + 1;
 			date = cal.get(Calendar.DATE);
-			if (dayParameter.indexOf("end")>=0) {
-				// 값 없음 → 당일 0시 ~ 다음날 0시 조회
-				date = date +1;
-			}
+//			if (dayParameter.indexOf("end")>=0) {
+//				// 값 없음 → 당일 0시 ~ 다음날 0시 조회
+//				date = date +1;
+//			}
 			strDay = year + "-" + StringUtil.prependZero(month,2) + "-" + date ;
 		}		
 		return strDay;
@@ -51,6 +51,10 @@ public class ServletUtil {
 		if (strTime != null && strTime.length() > 0) {
 			hour = Integer.parseInt(strTime);
 		}
+		else if (timeParameter.indexOf("end")>=0) {
+			// 값 없음 → 당일 0시 ~ 23시 조회
+			hour = 23;
+		}		
 		return hour;
 	}
 	
@@ -74,7 +78,7 @@ public class ServletUtil {
 		int hour = 0;
 		if (strTime != null && strTime.length() > 0) {
 			hour = Integer.parseInt(strTime);
-		}else if(defaultTime >= 0 && defaultTime <23 ){
+		}else if(defaultTime >= 0 && defaultTime <=23 ){
 			hour = defaultTime;
 		}
 		return hour;

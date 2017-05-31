@@ -39,11 +39,11 @@ public class GraphController {
 			result.setNowGroup( StringUtil.isNaturalNum(0 , data.getNowGroup()) + "");
 			// 값 없으면 오늘
 			result.setStartDay( ServletUtil.getDay( data.getStartDay() , 0) );
-			// 값 없으면 오늘+1
-			result.setEndDay( ServletUtil.getDay( data.getEndDay() , 1) );
-			// 값 없으면 0시
+			// 값 없으면 오늘
+			result.setEndDay( ServletUtil.getDay( data.getEndDay() , 0) );
+			// 값 없으면 0시 ~ 23시
 			result.setStartTime( ServletUtil.getTime( data.getStartTime(), 0) + "");
-			result.setEndTime( ServletUtil.getTime( data.getEndTime(), 0) + "");
+			result.setEndTime( ServletUtil.getTime( data.getEndTime(), 23) + "");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

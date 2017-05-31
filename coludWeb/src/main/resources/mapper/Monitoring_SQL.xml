@@ -32,6 +32,10 @@
 		SELECT	g_m_period		FROM Group_Table
 		WHERE g_no = #{g_no}
 	</select>
+	<select id ="getG_m_off" parameterType="_int" resultType="_int">
+		SELECT	g_m_off		FROM Group_Table
+		WHERE g_no = #{g_no}
+	</select>
 
 	<select id ="getGs_nos" parameterType="_int" resultType="_int">
 		SELECT	gs_no		FROM Group_sensor

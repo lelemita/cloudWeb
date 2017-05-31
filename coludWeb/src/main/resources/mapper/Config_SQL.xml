@@ -16,6 +16,7 @@
 			AND		l.sf_no = sf.sf_no
 			AND		f.f_table_name = #{f_table_name}
 			AND		f.f_no = sf.f_no
+			ORDER BY gs.gs_code
 	</select>		
 
 	<!-- 센서 이름 변경 -->
