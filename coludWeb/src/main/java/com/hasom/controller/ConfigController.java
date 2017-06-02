@@ -355,7 +355,7 @@ public class ConfigController {
 		model.addAttribute("nowGroup", nowGroup);	
 		model.addAttribute("nowFactor", nowFactor);
 				
-		return "redirect: ../Manager/SensorSetting.hs";
+		return "redirect:../Manager/SensorSetting.hs";
 	}
 	
 	/*

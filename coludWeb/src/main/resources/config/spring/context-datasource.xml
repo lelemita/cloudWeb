@@ -10,6 +10,7 @@
         <property name="url" value="jdbc:mysql://localhost:3306/cloud161219"/>
         <property name="username" value="hasom"/>
         <property name="password" value="hs14181702"/>
+        <property name="validationQuery" value="select 1"/>
     </bean>
     <bean id="dataSource" class="net.sf.log4jdbc.Log4jdbcProxyDataSource">
         <constructor-arg ref="dataSourceSpied" />

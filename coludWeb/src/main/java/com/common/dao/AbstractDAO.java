@@ -1,6 +1,5 @@
 package com.common.dao;
 
-import java.sql.SQLException;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
