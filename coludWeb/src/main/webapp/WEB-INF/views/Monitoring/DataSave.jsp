@@ -317,7 +317,7 @@ $(document).ready(function () {
 								<!-- data와 시간이 동일한 경우의 value만 보여줌 -->
 								<c:forEach items="${list}" var="data" varStatus="st">
 									
-									<c:if test="${data.hour eq date.hours && data.gr*UNITTIME eq date.minutes}">
+									<c:if test="${data.year eq date.year+1900 && data.month eq date.month+1 && data.day eq date.date && data.hour eq date.hours && data.gr*UNITTIME eq date.minutes}">
 										<td>${data.value/10}</td>
 										<c:set var="flag" value="false"/>						
 									</c:if>

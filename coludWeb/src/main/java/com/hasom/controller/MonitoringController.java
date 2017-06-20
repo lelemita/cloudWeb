@@ -1,18 +1,22 @@
 package com.hasom.controller;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
 import com.hasom.service.MonitoringService;
 import com.hasom.util.PageUtil;
 import com.hasom.util.ServletUtil;
@@ -386,6 +390,10 @@ public class MonitoringController {
 			//		★ 조회 순서 바꾸려면 이 아래를 반대로 (1/2)
 			startCal.add(Calendar.MINUTE, -unitTime);
 			while ( endCal.after(startCal) ) {
+				
+				SimpleDateFormat form = new SimpleDateFormat("MM-dd HH:mm");
+				System.err.println(">> " + form.format(endCal.getTime()));
+				
 				dateList.add(endCal.getTime()); //왠지 Calendar를 JSP에서 못 받음
 				endCal.add(Calendar.MINUTE, -unitTime);
 			}			
@@ -397,16 +405,21 @@ public class MonitoringController {
 			//	 1) 페이지 정보 구하기
 			PageUtil pInfo = new PageUtil(nowPage, totalCount, 10 ,10 );
 			//	 2) 시작과 마지막 인덱스 구하기
-			int	startIndex	= (pInfo.getNowPage()-1) * pInfo.getPageList();
-			int	endIndex	= startIndex + pInfo.getPageList() - 1;
+			int	startIndex	= (pInfo.getNowPage()-1) * pInfo.getPageList() +1;
+			int	endIndex	= startIndex + pInfo.getPageList();
 			// 		마지막 페이지에서 꽉 채우지 못한 경우 대비
 			endIndex = (endIndex < totalCount)? endIndex : totalCount-1;
-			//	 3) 해당 페이지 조회 기간 (★조회 순서 바꾸고 싶으면 여기를 반대로 2/2)
-			Date end	= dateList.get(startIndex);
-			Date start	= dateList.get(endIndex);
-			//	 4) dateList에서 해당 기간 만큼만 가짐
+			
+			System.err.println(">> startIndex : " + startIndex);
+			System.err.println(">> endIndex : " + endIndex);
+			
+			//	 3) dateList에서 해당 기간 만큼만 가짐(보여줄 기간)
 			List<Date> dateList_sub = dateList.subList(startIndex, endIndex);
-	
+			
+			//	 4) 해당 페이지 조회 기간 (★조회 순서 바꾸고 싶으면 여기를 반대로 2/2)
+			Date start	= dateList.get(startIndex-1);
+			Date end	= dateList.get(endIndex-1);
+
 			//	3.해당 페이지의 조회기간 만큼 각센서의 데이터를 조회
 			// 		각 센서+요소의 이름을 기억할 맵
 			HashMap listNames = new HashMap();
@@ -417,7 +430,7 @@ public class MonitoringController {
 			for (int gs_no : gs_no_array) {
 				for (String f_table_name : f_table_name_array ) {
 					String tableName = "G" + g_no + "_" + f_table_name + "_" + gs_no;
-					ArrayList list = service.GetTotalList(tableName, StringUtil.dateForm(start, "yyyy-MM-dd HH:mm") , StringUtil.dateForm(end, "yyyy-MM-dd HH:mm") , unitTime);
+					ArrayList list = service.GetTotalList(tableName, StringUtil.dateForm(end, "yyyy-MM-dd HH:mm") , StringUtil.dateForm(start, "yyyy-MM-dd HH:mm") , unitTime);
 					
 					// 센서+요소 이름을 맵에 저장
 					listNames.put(listCount, s_display_map.get(gs_no) + f_table_name );
@@ -657,11 +670,11 @@ public class MonitoringController {
 			ArrayList<Date> dateList = new ArrayList<Date>();
 			//		★ 조회 순서 바꾸려면 이 아래를 반대로 (1/2)
 			startCal.add(Calendar.MINUTE, -unitTime);
-			while ( endCal.after(startCal) ) {
-				dateList.add(endCal.getTime()); //왠지 Calendar를 JSP에서 못 받음
-				endCal.add(Calendar.MINUTE, -unitTime);
+			while ( startCal.before(endCal) ) {
+				dateList.add(startCal.getTime()); //왠지 Calendar를 JSP에서 못 받음
+				startCal.add(Calendar.MINUTE, unitTime);
 			}			
-			dateList.add(startCal.getTime()); 
+			dateList.add(endCal.getTime());
 			
 			// 총 목록 수
 			//int totalCount = dateList.size();
@@ -669,13 +682,13 @@ public class MonitoringController {
 			//	 1) 페이지 정보 구하기
 			//PageUtil pInfo = new PageUtil(nowPage, totalCount, 10 ,10 );
 			//	 2) 시작과 마지막 인덱스 구하기
-			int	startIndex	= 0;
+			int	startIndex	= 1;
 			int	endIndex	= dateList.size() - 1;
 			// 		마지막 페이지에서 꽉 채우지 못한 경우 대비
 			//endIndex = (endIndex < totalCount)? endIndex : totalCount-1;
 			//	 3) 해당 페이지 조회 기간 (★조회 순서 바꾸고 싶으면 여기를 반대로 2/2)
-			Date end	= dateList.get(startIndex);
-			Date start	= dateList.get(endIndex);
+			Date start	= dateList.get(startIndex);
+			Date end	= dateList.get(endIndex);
 			//	 4) dateList에서 해당 기간 만큼만 가짐
 			List<Date> dateList_sub = dateList.subList(startIndex, endIndex);
 	
@@ -721,7 +734,7 @@ public class MonitoringController {
 	}//DataSave()	
 	
 	/* 2017.02.17.남연우.
-	 *  데이터 저장 (csv) 
+	 *  데이터 인쇄
 	 */
 	@RequestMapping("/Monitoring/DataPrint.hs")
 	public String DataPrint(HttpSession session, HttpServletRequest req, Model model) {
@@ -927,11 +940,11 @@ public class MonitoringController {
 			ArrayList<Date> dateList = new ArrayList<Date>();
 			//		★ 조회 순서 바꾸려면 이 아래를 반대로 (1/2)
 			startCal.add(Calendar.MINUTE, -unitTime);
-			while ( endCal.after(startCal) ) {
-				dateList.add(endCal.getTime()); //왠지 Calendar를 JSP에서 못 받음
-				endCal.add(Calendar.MINUTE, -unitTime);
+			while ( startCal.before(endCal) ) {
+				dateList.add(startCal.getTime()); //왠지 Calendar를 JSP에서 못 받음
+				startCal.add(Calendar.MINUTE, unitTime);
 			}			
-			dateList.add(startCal.getTime()); 
+			dateList.add(endCal.getTime());
 			
 			// 총 목록 수
 			//int totalCount = dateList.size();
@@ -939,13 +952,13 @@ public class MonitoringController {
 			//	 1) 페이지 정보 구하기
 			//PageUtil pInfo = new PageUtil(nowPage, totalCount, 10 ,10 );
 			//	 2) 시작과 마지막 인덱스 구하기
-			int	startIndex	= 0;
+			int	startIndex	= 1;
 			int	endIndex	= dateList.size() - 1;
 			// 		마지막 페이지에서 꽉 채우지 못한 경우 대비
 			//endIndex = (endIndex < totalCount)? endIndex : totalCount-1;
 			//	 3) 해당 페이지 조회 기간 (★조회 순서 바꾸고 싶으면 여기를 반대로 2/2)
-			Date end	= dateList.get(startIndex);
-			Date start	= dateList.get(endIndex);
+			Date start	= dateList.get(startIndex);
+			Date end	= dateList.get(endIndex);
 			//	 4) dateList에서 해당 기간 만큼만 가짐
 			List<Date> dateList_sub = dateList.subList(startIndex, endIndex);
 	
