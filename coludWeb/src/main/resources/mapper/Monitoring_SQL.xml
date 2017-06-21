@@ -88,7 +88,7 @@
 		WHERE	l_no = #{l_no}
 	</select>
 	<select id ="getLastValue" parameterType="hashmap" resultType="string">
-		SELECT	m_value	FROM	${table_name}
+		SELECT	replace(m_value , ',' , '') 	FROM	${table_name}
 		WHERE	l_no = #{l_no}
 	</select>	
 	

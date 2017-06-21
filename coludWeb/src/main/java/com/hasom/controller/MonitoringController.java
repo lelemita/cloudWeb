@@ -389,11 +389,7 @@ public class MonitoringController {
 			ArrayList<Date> dateList = new ArrayList<Date>();
 			//		★ 조회 순서 바꾸려면 이 아래를 반대로 (1/2)
 			startCal.add(Calendar.MINUTE, -unitTime);
-			while ( endCal.after(startCal) ) {
-				
-				SimpleDateFormat form = new SimpleDateFormat("MM-dd HH:mm");
-				System.err.println(">> " + form.format(endCal.getTime()));
-				
+			while ( endCal.after(startCal) ) {				
 				dateList.add(endCal.getTime()); //왠지 Calendar를 JSP에서 못 받음
 				endCal.add(Calendar.MINUTE, -unitTime);
 			}			
@@ -409,9 +405,6 @@ public class MonitoringController {
 			int	endIndex	= startIndex + pInfo.getPageList();
 			// 		마지막 페이지에서 꽉 채우지 못한 경우 대비
 			endIndex = (endIndex < totalCount)? endIndex : totalCount-1;
-			
-			System.err.println(">> startIndex : " + startIndex);
-			System.err.println(">> endIndex : " + endIndex);
 			
 			//	 3) dateList에서 해당 기간 만큼만 가짐(보여줄 기간)
 			List<Date> dateList_sub = dateList.subList(startIndex, endIndex);
