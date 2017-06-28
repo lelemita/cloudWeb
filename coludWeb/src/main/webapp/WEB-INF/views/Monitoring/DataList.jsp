@@ -247,8 +247,10 @@ $(function() {
 		     	<div class="col-sm-7">
 						<select name="unitTime" id="unitTime" class="form-control" >
 							<option value=0>all</option>
+							<!-- 
 							<option value=1> 1분</option>
 							<option value=5> 5분</option>
+							 -->
 							<option value=10>10분</option>
 							<option value=15>15분</option>
 							<option value=30>30분</option>

@@ -128,8 +128,8 @@ $(function() {
 			alert("조회 할 센서를 선택하세요");
 			return false;
 		}
-		else if( $(":checkbox[name='nowSensor']:checked").length > 5 ){
-			alert("센서는 5개까지 선택 가능합니다.");
+		else if( $(":checkbox[name='nowSensor']:checked").length > 6 ){
+			alert("센서는 6개까지 선택 가능합니다.");
 			return false;
 		}		
 		

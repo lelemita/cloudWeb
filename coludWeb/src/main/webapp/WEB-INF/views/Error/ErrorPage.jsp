@@ -32,7 +32,7 @@
 			이 에러가 발생한 상황을 알려주시면,<br>
 			조치하도록 하겠습니다.<br></h3>
 		<br><br>
-		<input type="button" class="btn btn-lg btn-warning" onclick="location.href='http://210.180.224.10:8080/cloud/'" value="홈으로 갑니다">
+		<input type="button" class="btn btn-lg btn-warning" onclick="location.href='http://cloud.hasom.com/'" value="홈으로 갑니다">
 	</div>
 
 	<div style="background-color:black; color:#f1f1f1; height:20%"></div>

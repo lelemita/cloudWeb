@@ -51,7 +51,7 @@
 		<if test='kind eq "V"'>
 			AND l_no != 0
 		</if>		
-			ORDER BY e.evt_no DESC
+			ORDER BY e.evt_no 
 	</select>
 	
 </mapper>
