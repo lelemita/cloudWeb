@@ -39,6 +39,19 @@ public class JobData {
 		}
 	}
 	
+	// j_class 의미
+	public String getStrJ_class() {
+		if(j_class==null) { 
+			return ""; 
+		}else if (j_class.equals("KAKAO_A")) {
+			return "알림톡";
+		}else if (j_class.equals("KAKAO_F")) {
+			return "친구톡";
+		}else {
+			return j_class;
+		}
+	}
+	
 	// j_target 의미
 	public String getStrTarget(){
 		if(j_target==null) { return "";}

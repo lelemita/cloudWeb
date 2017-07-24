@@ -16,7 +16,7 @@ $(document).ready(function(){
 		alert("${MSG}");
 	}
 	
-	opener.parent.location.reload();
+	window.opener.parent.location.reload();
 	window.close();
 	
 });

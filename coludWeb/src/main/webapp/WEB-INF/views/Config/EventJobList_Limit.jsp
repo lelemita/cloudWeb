@@ -71,7 +71,7 @@ $(document).ready(function(){
 	});//change()
 	
 	// 행 선택하기
-	$("table:first tr td:first-child").click(function(){
+	$("[name='sel']").click(function(){
 		$(this).toggleClass("choosed");
 	});
 	

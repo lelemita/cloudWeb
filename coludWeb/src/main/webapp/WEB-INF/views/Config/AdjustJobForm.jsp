@@ -56,6 +56,9 @@ function adjustJobProc( workType ){
 	//선택된 j_class 확인
 	var select = document.getElementById("j_class");
 	var j_class = select.options[select.selectedIndex].value;
+	if( j_class=='KAKAO_A' ) {
+		msgArea.innerHTML = "신규 알림톡 등록은 관리자에게 문의해주세요."; return;
+	}
 	
 	// 무결성 검사
 	if( $("#j_name").val().length == 0 ) {
@@ -145,7 +148,12 @@ function checkPassword(pw) {
 				<div class="col-sm-5">
 					<select class="form-control text-center" name="j_class" id="j_class" style="text-align: center;">
 						<c:forEach items="${JOBTYPES}" var="type">
-							<option value="${type}"> ${type}</option>
+							<c:if test="${type eq 'KAKAO_A'}">
+								<option value="${type}" disabled="disabled"> 알림톡 등록은 관리자 문의</option>
+							</c:if>
+							<c:if test="${type ne 'KAKAO_A'}">
+								<option value="${type}"> ${type}</option>
+							</c:if>
 						</c:forEach>
 					</select>
 				</div>

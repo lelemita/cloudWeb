@@ -176,7 +176,12 @@ function checkPassword(pw) {
 					<select class="form-control" id="j_class" style="width:200px; margin:auto;">
 						<option>-선택해주세요-</option>
 						<c:forEach items="${JOBTYPES}" var="j_class" >
-							<option value="${j_class}">${j_class}</option>
+							<c:if test="${j_class eq 'KAKAO_A'}">
+								<option value="${j_class}">알림톡</option>
+							</c:if>
+							<c:if test="${j_class ne 'KAKAO_A'}">
+								<option value="${j_class}">${j_class}</option>
+							</c:if>
 						</c:forEach>
 					</select>
 				</div>

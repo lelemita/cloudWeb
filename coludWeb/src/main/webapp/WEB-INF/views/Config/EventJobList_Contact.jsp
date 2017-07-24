@@ -31,8 +31,9 @@ table .hide {
 
 <script>
 //내용 보이고 숨기기
-function toggleTr(j_no){
-	$("#pop" + j_no).toggleClass("hide");
+function toggleTr(st,st2){
+	//alert("#pop" + st + "_" + st2);
+	$("#pop" + st + "_" + st2).toggleClass("hide");
 }
 
 //잡 수정, 추가(j_no==-1) 할 폼 요청 (새창)
@@ -179,13 +180,13 @@ $(document).ready(function(){
 							<th class="text-center">수신대상</th>
 						</tr>
 						<c:forEach items="${list}" var="job" varStatus="st2">
-						<tr onclick="toggleTr(${job.j_no});">
+						<tr onclick="toggleTr(${st.index},${st2.index});">
 							<td style="width:60px;">${st2.count}</td>
-							<td style="width:130px;">${job.j_class}</td>
+							<td style="width:130px;">${job.strJ_class}</td>
 							<td>${job.j_name}</td>
 							<td style="width:130px;">${job.strTarget}</td>
 						</tr>
-						<tr id="pop${job.j_no}" class="hide">
+						<tr id="pop${st.index}_${st2.index}" class="hide">
 							<td><!-- 여백 --></td> 
 							<td colspan="2">${job.j_text}</td>
 							<td><button onclick="adjustJob( ${st.index} , ${st2.index}, ${job.j_no});">수정</button></td> 

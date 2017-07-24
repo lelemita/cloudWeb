@@ -55,6 +55,7 @@ function adjust() {
 	//요청
 	$("#sfrm").attr("action" , "../Manager/LimitEventJobProc.hs");
 	$("#sfrm").submit();
+	
 }
 
 //비밀번호 검사

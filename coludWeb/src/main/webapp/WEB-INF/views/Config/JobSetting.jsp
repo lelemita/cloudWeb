@@ -207,7 +207,7 @@ $(document).ready(function(){
 			<tr height="45" valign="middle" id="${job.g_no}-${job.j_no}">
 				<td>${st.count}</td>
 				<td>${job.j_name}</td>
-				<td>${job.j_class}</td>
+				<td>${job.strJ_class}</td>
 				<td>${job.strTarget}</td>
 				<td style="text-align:left; padding-left:30px;">${job.j_text}</td>
 			</tr>	
