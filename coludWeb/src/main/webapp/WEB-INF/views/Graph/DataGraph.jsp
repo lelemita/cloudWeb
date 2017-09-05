@@ -185,7 +185,7 @@ $(function() {
 				show: true
 			},
 			points: {
-				show: true
+				show: false
 			}
 		},
 		xaxis: {

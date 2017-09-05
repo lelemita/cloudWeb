@@ -45,14 +45,48 @@
 				        <!-- 측정값 표시 -->
 				        <div class="panel-body">
 							<!-- 각 패널 속에 요소 수만큼 정보표시 -->
-				        	<c:forEach items="${data.values}" var="value" varStatus="st">
+				       <c:forEach items="${data.values}" var="value" varStatus="st">
+								<!-- 정상범위 일탈 → 빨간색 표시 -->
+								<!-- 문자열을 숫자로 바꾸기 위해 +0 을 해줌 -->
 								<c:choose>
 									<c:when test="${ (value+0 lt data.l_lows[st.index]+0) or (value+0 gt data.l_highs[st.index]+0)}">
-									<!-- 문자열을 숫자로 바꾸기 위해 +0 을 해줌 -->
-								    	<h4><font color="red">${value} ${data.f_units[st.index]}</font></h4>
+								    	<!-- Digital : 단위'di'  →  OFF(0.0) / ON(그외)로 표시 -->
+								    	<c:choose>
+												<c:when test="${data.f_units[st.index] eq 'di'}">
+													<c:choose>
+														<c:when test="${value+0 eq 0}">
+										    			<h4><font color="red">OFF</font></h4>
+										    		</c:when>
+										    		<c:otherwise>
+										    			<h4><font color="red">ON</font></h4>
+										    		</c:otherwise>
+									    		</c:choose>
+									    	</c:when>
+									    	<c:otherwise>
+													<!-- Analog -->
+									    		<h4><font color="red">${value} ${data.f_units[st.index]}</font></h4>
+									    	</c:otherwise>
+								    	</c:choose>
 								    </c:when>
 								    <c:otherwise>
-								    	<h4>${value} ${data.f_units[st.index]}</h4>
+								    	<!-- 정상범위 -->
+								    	<c:choose>
+												<c:when test="${data.f_units[st.index] eq 'di'}">
+									    		<!-- Digital : 단위'di'  →  OFF(0.0) / ON(그외)로 표시 -->
+													<c:choose>
+														<c:when test="${value+0 eq 0}">
+										    			<h4>OFF</h4>
+										    		</c:when>
+										    		<c:otherwise>
+										    			<h4>ON</h4>
+										    		</c:otherwise>
+									    		</c:choose>
+									    	</c:when>
+									    	<c:otherwise>
+													<!-- Analog -->
+									    		<h4>${value} ${data.f_units[st.index]}</h4>
+									    	</c:otherwise>
+									    </c:choose>
 								    </c:otherwise>
 							    </c:choose> 
 							</c:forEach>
