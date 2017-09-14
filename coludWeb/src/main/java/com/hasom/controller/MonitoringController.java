@@ -319,19 +319,52 @@ public class MonitoringController {
 				int gs_no = (Integer) gs_no_array.get(0);
 				
 				//1. 총 목록수 구하기
+				// 해당 센서 에서 측정하는 요소만 조회 20170905
+					// 해당 센서의 측정요소 f_table_name 목록 조회
+					ArrayList<String> f_list = service.GetF_table_names(gs_no);
+					// 목록수 조회할 요소 (양쪽모두에 속하는 아무거나)
+					String represent = "";
+					// f_table_name_array에서 앞의 목록에 있는 요소만 남김
+					for(int i=0; i<f_table_name_array.length ; i++) {
+						boolean isThere = false;
+						for(String temp : f_list){
+							if( f_table_name_array[i].equals(temp)){
+								if (represent.length() == 0) {
+									represent = f_table_name_array[i];
+								}
+								isThere = true;
+								break;
+							}//if 
+						}// for
+						if(!isThere) {
+							// 해당 센서가 측정하지 않는 요소는 목록에서 삭제 (조회X)
+							f_table_name_array[i] = "";
+						}
+					}// 각각 검사
+					
+				if(represent.length()==0) {
+					// 겹치는 요소가 하나도 없음
+					// (나중에★★★) 해당 센서에 해당하는 요소를 선택하도록 안내해야 함
+					return "/Monitoring/DataList";
+				}
+			
 				//	동일 센서라면 모든 요소의 데이터 수가 같으므로, 첫번째 요소 기준으로 목록 수를 구한다.
-				String tableName1 = "G" + g_no + "_" + f_table_name_array[0] + "_" + gs_no;
+				//String tableName1 = "G" + g_no + "_" + f_table_name_array[0] + "_" + gs_no;
+				String tableName1 = "G" + g_no + "_" + represent + "_" + gs_no;
 				int totalCount = service.getTotalCount(tableName1, startDay+" "+startTime, endDay+" "+endTime);
 				//2. 페이지 정보 구하기
 				PageUtil pInfo = new PageUtil(nowPage, totalCount, 10 ,10 );				
 
 				// 각 센서+요소의 이름을 기억할 맵
 				HashMap listNames = new HashMap();
-				
+
 				// 각 요소별 데이터 리스트를 저장할 리스트
 				ArrayList listList = new ArrayList();
 				int listCount = 0;	// 총 리스트의 개수
 				for (String f_table_name : f_table_name_array ) {
+					if(f_table_name.length()==0){
+						continue;
+					}
 					String tableName = "G" + g_no + "_" + f_table_name + "_" + gs_no;
 
 					//3. 목록 구하기
@@ -420,9 +453,38 @@ public class MonitoringController {
 			ArrayList listList = new ArrayList();
 			
 			int listCount = 0;
+			String[] backup = new String[f_table_name_array.length];
+			for(int i=0 ; i<backup.length ; i++) {
+				backup[i] = f_table_name_array[i];
+			}
 			for (int gs_no : gs_no_array) {
+				for(int i=0 ; i<backup.length ; i++) {
+					f_table_name_array[i] = backup[i] ;
+				}
+				// 해당 센서 에서 측정하는 요소만 조회 20170905
+				// 해당 센서의 측정요소 f_table_name 목록 조회
+				ArrayList<String> f_list = service.GetF_table_names(gs_no);
+				// f_table_name_array에서 앞의 목록에 있는 요소만 남김
+				for(int i=0; i<f_table_name_array.length ; i++) {
+					boolean isThere = false;
+					for(String temp : f_list){
+						if( f_table_name_array[i].equals(temp)){
+							isThere = true;
+							break;
+						}//if 
+					}//for(센서의 요소들)
+					// 해당 센서가 측정하지 않는 요소는 목록에서 삭제 (조회X)
+					if(!isThere){
+						f_table_name_array[i] = "";
+					}
+				}// 각각 검사
+				
 				for (String f_table_name : f_table_name_array ) {
+					if(f_table_name.length()==0) {
+						continue;
+					}
 					String tableName = "G" + g_no + "_" + f_table_name + "_" + gs_no;
+					
 					ArrayList list = service.GetTotalList(tableName, StringUtil.dateForm(end, "yyyy-MM-dd HH:mm") , StringUtil.dateForm(start, "yyyy-MM-dd HH:mm") , unitTime);
 					
 					// 센서+요소 이름을 맵에 저장

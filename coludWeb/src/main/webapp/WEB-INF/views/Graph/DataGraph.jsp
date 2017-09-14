@@ -373,9 +373,12 @@ $(function() {
 		</div> <!-- /.tab-content -->
 
 		<!-- 조회결과		 -->		
-		<c:if test="${GRAPHDATA ne null }"><div>
-		<!-- 미구현 : 나중에, 데이터가 없으면, 데이터 없다고 말하도록 수정하자 -->
+		<!-- 대충구현 : 나중에, 데이터가 없으면, 데이터 없다고 말하도록 수정하자 -->
+		<c:if test="${GRAPHDATA eq '-1'}">
+			<p align="center">- 해당 데이터가 없습니다. -</p>
+		</c:if>
 
+		<c:if test="${GRAPHDATA ne null && GRAPHDATA ne '-1'}"><div>
 			<div class="well col-sm-12" align="center">
 				<div id="placeholder" class="demo-placeholder" style="width:100%; height:400px"></div>
 			</div>

@@ -2,6 +2,8 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!-- 날짜형식 지정 태그 라이브러리 -->
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<!-- indexOf 라이브러리 -->
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -30,8 +32,7 @@
 <link href="../resources/css/common.css?ver=0.1" rel="stylesheet" type="text/css">
 
 <script>
-$(function() {
-
+$(function() {	
 		//초기 세팅
 		// 0) Header의 현재 메뉴 표시
 		$("li[id='DataList']").addClass("active");
@@ -87,6 +88,22 @@ $(function() {
 		$("#hour1").val("${STARTTIME}").prop("selected", true);
 		$("#hour2").val("${ENDTIME}").prop("selected", true);
 		$("#unitTime").val("${UNITTIME}").prop("selected", true);
+		
+		// 요소: 접점 선택시, 온도/습도/카운터는 선택 해제하고, 조회 간격 all
+		$(":checkbox[value='DI']").change(function(){
+			if( $(":checkbox[value='DI']").is(":checked") ){
+				$(":checkbox[value='TMP']").prop('checked' , false);
+				$(":checkbox[value='HUM']").prop('checked' , false);
+				$(":checkbox[value='DC']").prop('checked' , false);
+				$("#unitTime").val(0);
+			}
+		})
+		// 요소: 나머지 선택시, 접점은 선택 해제
+		$(":checkbox[name='nowFactor']").change(function(){
+			if( this.value != 'DI' ){
+				$(":checkbox[value='DI']").prop('checked' , false);
+			} 
+		})
 });
 
 	
@@ -119,6 +136,7 @@ $(function() {
 	
 	// 조회 버튼 이벤트
 	function search() {
+
 		// 무결성 검사
 		if( ! $(":checkbox[name='nowSensor']:checked").is(":checked") ) {
 			alert("조회 할 센서를 선택하세요");
@@ -135,6 +153,9 @@ $(function() {
 		
 		if( ! $(":checkbox[name='nowFactor']:checked").is(":checked") ) {
 			alert("조회 할 요소를 선택하세요");
+			return false;
+		} else if( $(":checkbox[value='DI']:checked").is(":checked") && $("#unitTime option:selected").val()!=0 ){
+			alert("접점은 all 간격으로 단독 조회만 가능합니다.");
 			return false;
 		}
 		$("#sfrm").submit();
@@ -367,6 +388,8 @@ $(function() {
 							<th class="text-center">번호</th>
 							<th class="text-center">측정시각</th>
 							<c:forEach items="${LISTCOUNT}" var="num">
+								<!-- 접점은 항상 혼자라서 그냥 -ㅅ-;; -->
+								<c:set var="di" value="${fn:contains(LISTNAMES.get(num), 'DI') }"/>
 								<th class="text-center">
 									${LISTNAMES.get(num)}
 								</th>			
@@ -377,15 +400,31 @@ $(function() {
 							<tr>
 								<td>${data.no}</td>
 								<td><fmt:formatDate value="${data.date}" type="both" pattern="yyyy-MM-dd HH:mm:ss"/></td>
-								<td>${data.value}</td>
 
+								<!-- 첫번째 요소 : 여기 하던 중 -->
+								<!-- Digital : 단독 rawdata조회만 가능함 -->
+								<c:if test="${di}">
+									<c:choose>
+										<c:when test="${data.value+0 eq 0}">
+											<td>OFF</td>
+										</c:when>
+										<c:otherwise>
+											<td>ON</td>
+										</c:otherwise>
+									</c:choose>										
+								</c:if>
+								
+								<!-- Analog -->
+								<c:if test="${not di}">
+									<td>${data.value}</td>
+								</c:if>
+							
 								<!-- 각 요소 별로 반복 -->
 								<c:forEach items="${LISTLIST}" var="list">
 									<td>
 										${list[st.index].value}
 									</td>
 								</c:forEach>
-
 							</tr>
 						</c:forEach>							
 					</table>

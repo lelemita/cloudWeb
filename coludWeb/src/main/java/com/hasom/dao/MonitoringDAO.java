@@ -117,6 +117,13 @@ public class MonitoringDAO extends AbstractDAO{
 		temp.put("endTime", endTime);
 		temp.put("unitTime", unitTime);
 		return (ArrayList) selectList("monitoring.getTotalList_UnitTime" ,temp);
+	}
+
+	/* 170905
+	 * 해당 센서의 측정요소 f_table_name 목록 조회
+	 */
+	public ArrayList<String> getF_table_names(int gs_no) throws Exception{
+		return (ArrayList<String>) selectList("monitoring.getF_table_names", gs_no);
 	}	
 	
 }//class

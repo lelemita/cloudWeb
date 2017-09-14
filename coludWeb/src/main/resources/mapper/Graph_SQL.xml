@@ -27,4 +27,14 @@
 		]]>		
 	</select>
 	
+	<!-- 선택한 요소를 측정하는 센서인지 확인 20170907 -->
+	<select id ="checkSensor" parameterType="hashmap" resultType="_int">
+		SELECT COUNT(gs.gs_no) AS isThere
+			FROM group_sensor gs, sensor_factor sf, factor f 
+			WHERE	gs.gs_no = #{gs_no}
+			AND	gs.s_no = sf.s_no
+			AND	sf.f_no = f.f_no
+			AND	f.f_table_name = #{f_table_name}
+	</select>	
+	
 </mapper>	

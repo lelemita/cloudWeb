@@ -26,6 +26,23 @@ public class GraphDAO extends AbstractDAO{
 		paramap.put("endTime", endTime);
 		return (ArrayList<String>) selectList("graph.getDataList" , paramap);
 	}
+
 	
-	
+	//	해당 그룹의 모든 센서 설치 위치 목록
+	public ArrayList getS_displays(int g_no) throws Exception {
+		return (ArrayList) selectList("monitoring.getS_displays_wo_di", g_no);
+	}
+
+		//	해당 그룹의 모든 측정요소 목록 (중복제외)
+	public ArrayList getF_names_wo_di(int g_no)throws Exception {
+		return (ArrayList) selectList("monitoring.getF_names_wo_di", g_no);
+	}
+
+	// 선택한 요소를 측정하는 센서인지 확인 20170907
+	public boolean checkSensor(int gs_no, String f_table_name) throws Exception {
+		HashMap paramap = new HashMap();
+		paramap.put("gs_no", gs_no);
+		paramap.put("f_table_name", f_table_name.toUpperCase() );
+		return (Integer)selectOne("graph.checkSensor" , paramap) == 1 ? true : false;
+	}
 }//class

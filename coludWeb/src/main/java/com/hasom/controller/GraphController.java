@@ -103,11 +103,13 @@ public class GraphController {
 			// g_no = g_no[nowGroup] 에 대해서 다음 실행
 			g_no = (Integer) g_nos.get(nowGroup);
 
-			//	(3) 해당 그룹의 모든 센서 설치 위치 목록
-			s_displays = mService.getS_displays(g_no);
+			//	(3) 해당 그룹의 모든 센서 설치 위치 목록 (접점제외)
+			//s_displays = mService.getS_displays(g_no);
+			s_displays = service.getS_displays_wo_di(g_no);
 			
-			//	(4) 해당 그룹의 모든 측정요소 목록 (중복제외)
+			//	(4) 해당 그룹의 모든 측정요소 목록 (중복제외) (접점제외)
 			f_names = mService.getF_names(g_no);
+			f_names = service.getF_names_wo_di(g_no);
 		}
 		catch (Exception ex) {
 			log.info(">> 그룹 정보조회 실패");	
@@ -137,7 +139,12 @@ public class GraphController {
 		//3) 그래프 그리는데 필요한 내용 서비스 받음
 		try{	
 			HashMap listMap = service.getListMap(data, g_no);
-			mv.addObject("GRAPHDATA", listMap);
+			if(listMap==null) {
+				mv.addObject("GRAPHDATA", -1);	
+			} else {
+				mv.addObject("GRAPHDATA", listMap);				
+			}
+			
 		} catch (Exception e) {
 			// (나중에) 에러 페이지로 연결시키기
 			e.printStackTrace();

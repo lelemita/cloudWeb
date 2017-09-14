@@ -54,15 +54,30 @@
 		WHERE 	g_no = #{g_no}
 		ORDER BY gs_code
 	</select>	
-	
+	<!-- 해당 그룹의 모든 센서 설치 위치 목록 : 접점제외 -->
+	<select id ="getS_displays_wo_di" parameterType="_int" resultType="hashmap">
+		SELECT	DISTINCT gs.gs_no, gs.s_display
+			FROM Group_sensor gs, sensor_factor sf
+			WHERE 	gs.g_no = #{g_no}
+			AND			gs.s_no = sf.s_no
+			AND			sf.sf_type = 'A'
+			ORDER BY gs.gs_code
+	</select>	
 
-	
 	<!-- gs_no ==> 각 센서 요소(sf_no[]) 목록 확인 (Group_sensor + Sensor_Factor [s_no조인] ) -->
 	<select id ="getSf_nos" parameterType="_int" resultType="_int">
 		SELECT	sf.sf_no		FROM Sensor_factor sf , Group_sensor gs
 		WHERE 	gs.gs_no = #{gs_no}
 		AND		gs.s_no = sf.s_no
 	</select>
+	
+	<select id ="getF_table_names" parameterType="_int" resultType="string">
+		SELECT	f.f_table_name
+		FROM		Sensor_factor sf , Group_sensor gs, factor f
+		WHERE 	gs.gs_no = #{gs_no}
+		AND		gs.s_no = sf.s_no
+		AND		sf.f_no = f.f_no
+	</select>	
 	
 	<select id ="getFromLimitTable" parameterType="hashmap" resultType="hashmap">
 		SELECT	l_table_name , l_high , l_low		FROM 	Limit_table
@@ -101,6 +116,16 @@
 			AND		sf.f_no = f.f_no
 			ORDER BY f.f_no ASC
 	</select>	
+	<!-- 해당 그룹의 모든 측정요소 목록 (중복제외) : 접점제외-->
+	<select id ="getF_names_wo_di" parameterType="_int" resultType="hashmap">
+		SELECT	DISTINCT f.f_no, f_table_name, f.f_name 
+			FROM	Factor f , Sensor_factor sf, Group_sensor gs
+			WHERE 	gs.g_no = #{g_no}
+			AND		gs.s_no = sf.s_no
+			AND		sf.sf_type = 'A'
+			AND		sf.f_no = f.f_no
+			ORDER BY f.f_no ASC
+	</select>		
 	
 	<!-- (DataList) 특정 테이블의 목록 수 구하기 -->
 	<select id ="getTotalCount" parameterType="hashmap" resultType="_int">

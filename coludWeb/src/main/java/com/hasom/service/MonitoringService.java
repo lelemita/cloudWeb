@@ -159,6 +159,13 @@ public class MonitoringService {
 	public ArrayList GetTotalList(String tableName, String startTime, String endTime) throws Exception {
 		ArrayList list = dao.getTotalList(tableName, startTime, endTime);
 		return list;
+	}
+
+	/* 170905
+	 * 해당 센서의 측정요소 f_table_name 목록 조회
+	 */
+	public ArrayList<String> GetF_table_names(int gs_no) throws Exception {
+		return dao.getF_table_names(gs_no);
 	}	
 	
 	
