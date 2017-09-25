@@ -12,9 +12,9 @@
 					<fmt:formatDate var="nowTime"	value="${now}"			pattern="yyyyMMddHHmmss" />
 					<fmt:formatDate var="lastTime"	value="${data.date}"	pattern="yyyyMMddHHmmss" />		
 					<fmt:parseNumber var="gapTime" value="${(now.time - data.date.time) / (1000) }" integerOnly="true" />
-		
-					<c:choose>						
-						<c:when test="${G_M_OFF lt gapTime}" >
+
+					<c:choose>
+						<c:when test="${G_M_OFF lt gapTime}">
 							<!-- 통신 장애 -->
 							<div class="panel panel-default">
 						</c:when>
