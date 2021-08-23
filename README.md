@@ -5,3 +5,6 @@
 
 ### 메뉴얼
 * https://github.com/lelemita/cloudWeb/blob/master/manual.pdf
+
+### 사용 언어, 도구
+* Spring, Java, jsp, jQuery, Bootstrap, MariaDB
